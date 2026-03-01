@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compacting Attendance System</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --danger-color: #ef4444;
+            --danger-hover: #dc2626;
+            --success-color: #10b981;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+
+        .live-clock {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        #clockTime {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        /* Sections */
+        .section-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-title {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.25rem;
+            color: var(--text-main);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Forms */
+        .form-row {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .input-group label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"] {
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="date"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-outline {
+            background-color: white;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-outline:hover {
+            background-color: #f1f5f9;
+        }
+
+        /* Table */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f8fafc;
+            padding: 12px 16px;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        .checkbox-cell {
+            text-align: center;
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+        }
+
+        .advance-input {
+            width: 100px;
+        }
+
+        .btn-delete {
+            background-color: transparent;
+            color: var(--danger-color);
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 4px;
+            font-size: 1.2rem;
+        }
+
+        .btn-delete:hover {
+            background-color: #fee2e2;
+        }
+
+        /* Modal/Report */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.open {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            border-radius: 12px;
+            overflow-y: auto;
+            padding: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .report-card {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+            background: #fafafa;
+        }
+
+        .report-worker-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .advance-history-table th {
+            font-size: 0.85rem;
+            padding: 8px;
+        }
+
+        .advance-history-table td {
+            font-size: 0.9rem;
+            padding: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>Compacting Attendance System</h1>
+            <div class="live-clock">
+                <span id="clockDate">Loading date...</span>
+                <span id="clockTime">--:--:--</span>
+            </div>
+        </div>
+
+        <!-- Add Staff Section -->
+        <div class="section-card">
+            <h2 class="section-title">Add Staff Member</h2>
+            <div class="form-row">
+                <div class="input-group">
+                    <label for="workerName">Worker Name</label>
+                    <input type="text" id="workerName" placeholder="Enter name">
+                </div>
+                <div class="input-group">
+                    <label for="workerSalary">Daily Salary (₹)</label>
+                    <input type="number" id="workerSalary" placeholder="Enter salary" min="0">
+                </div>
+                <button class="btn" id="btnAddStaff">Add Worker</button>
+            </div>
+        </div>
+
+        <!-- Attendance Section -->
+        <div class="section-card">
+            <h2 class="section-title">
+                Daily Attendance
+                <div class="input-group" style="flex-direction: row; align-items: center; gap: 10px;">
+                    <label for="attDate">Date:</label>
+                    <input type="date" id="attDate">
+                    <button class="btn btn-outline" id="btnViewReport" style="margin-left: 15px;">View Work
+                        Report</button>
+                </div>
+            </h2>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Salary (₹)</th>
+                            <th class="checkbox-cell">Morning</th>
+                            <th class="checkbox-cell">Evening</th>
+                            <th>Advance (₹)</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendanceTableBody">
+                        <!-- Rows injected via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Work Report Modal -->
+    <div class="modal" id="reportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 style="margin: 0; color: var(--primary-color);">Work Report</h2>
+                <button class="btn-close" id="btnCloseModal">&times;</button>
+            </div>
+            <div id="reportContainer">
+                <!-- Report content generated via JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Data Management ---
+        const STAFF_STORAGE_KEY = 'compacting_staff';
+        const ATT_STORAGE_KEY = 'compacting_attendance';
+
+        function getStaff() {
+            return JSON.parse(localStorage.getItem(STAFF_STORAGE_KEY) || '[]');
+        }
+
+        function saveStaff(staffList) {
+            localStorage.setItem(STAFF_STORAGE_KEY, JSON.stringify(staffList));
+        }
+
+        function getAttendance() {
+            return JSON.parse(localStorage.getItem(ATT_STORAGE_KEY) || '{}');
+        }
+
+        function saveAttendance(data) {
+            localStorage.setItem(ATT_STORAGE_KEY, JSON.stringify(data));
+        }
+
+        // --- Live Clock ---
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clockDate').textContent = now.toLocaleDateString('en-GB', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+            });
+            document.getElementById('clockTime').textContent = now.toLocaleTimeString('en-US', {
+                hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // --- Add Staff ---
+        document.getElementById('btnAddStaff').addEventListener('click', () => {
+            const nameInput = document.getElementById('workerName');
+            const salaryInput = document.getElementById('workerSalary');
+
+            const name = nameInput.value.trim();
+            const salary = parseInt(salaryInput.value, 10);
+
+            if (!name || isNaN(salary) || salary <= 0) {
+                alert("Please enter a valid name and daily salary.");
+                return;
+            }
+
+            const staff = getStaff();
+            if (staff.some(s => s.name.toLowerCase() === name.toLowerCase())) {
+                alert("Worker already exists.");
+                return;
+            }
+
+            staff.push({ id: Date.now().toString(), name, salary });
+            saveStaff(staff);
+
+            nameInput.value = '';
+            salaryInput.value = '';
+            renderTable();
+        });
+
+        // --- Delete Staff ---
+        function deleteStaff(id) {
+            if (!confirm("Are you sure you want to remove this worker?")) return;
+
+            let staff = getStaff();
+            staff = staff.filter(s => s.id !== id);
+            saveStaff(staff);
+            renderTable();
+        }
+
+        // --- Date Initialization ---
+        const dateInput = document.getElementById('attDate');
+        const todayStr = new Date().toISOString().split('T')[0];
+        dateInput.value = todayStr;
+
+        dateInput.addEventListener('change', renderTable);
+
+        // --- Render Table ---
+        function renderTable() {
+            const dateStr = dateInput.value;
+            if (!dateStr) return;
+
+            const tbody = document.getElementById('attendanceTableBody');
+            const staff = getStaff();
+            const allAtt = getAttendance();
+
+            // Ensure date object exists
+            if (!allAtt[dateStr]) {
+                allAtt[dateStr] = {};
+            }
+            const dayData = allAtt[dateStr];
+
+            tbody.innerHTML = '';
+
+            if (staff.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 20px;">No staff found. Please add staff above.</td></tr>';
+                return;
+            }
+
+            staff.forEach(worker => {
+                const wRecord = dayData[worker.id] || { morning: false, evening: false, advance: 0 };
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                <td style="font-weight: 500;">${worker.name}</td>
+                <td>₹${worker.salary}</td>
+                <td class="checkbox-cell">
+                    <input type="checkbox" class="chk-mrng" data-id="${worker.id}" ${wRecord.morning ? 'checked' : ''}>
+                </td>
+                <td class="checkbox-cell">
+                    <input type="checkbox" class="chk-evng" data-id="${worker.id}" ${wRecord.evening ? 'checked' : ''}>
+                </td>
+                <td>
+                    <input type="number" class="advance-input" data-id="${worker.id}" value="${wRecord.advance || ''}" min="0">
+                </td>
+                <td>
+                    <button class="btn-delete" onclick="deleteStaff('${worker.id}')" title="Delete Worker">&times;</button>
+                </td>
+            `;
+                tbody.appendChild(tr);
+            });
+
+            // Attach listeners to save instantly
+            document.querySelectorAll('.chk-mrng, .chk-evng, .advance-input').forEach(el => {
+                el.addEventListener('change', () => saveDailyData());
+            });
+        }
+
+        // --- Save Data ---
+        function saveDailyData() {
+            const dateStr = dateInput.value;
+            const staff = getStaff();
+            const allAtt = getAttendance();
+
+            if (!allAtt[dateStr]) {
+                allAtt[dateStr] = {};
+            }
+
+            staff.forEach(worker => {
+                const mChk = document.querySelector(`.chk-mrng[data-id="${worker.id}"]`);
+                const eChk = document.querySelector(`.chk-evng[data-id="${worker.id}"]`);
+                const advInp = document.querySelector(`.advance-input[data-id="${worker.id}"]`);
+
+                if (mChk && eChk && advInp) {
+                    const advVal = parseInt(advInp.value, 10);
+                    allAtt[dateStr][worker.id] = {
+                        morning: mChk.checked,
+                        evening: eChk.checked,
+                        advance: isNaN(advVal) ? 0 : advVal
+                    };
+                }
+            });
+
+            saveAttendance(allAtt);
+        }
+
+        // --- Work Report ---
+        const reportModal = document.getElementById('reportModal');
+
+        document.getElementById('btnViewReport').addEventListener('click', () => {
+            generateReport();
+            reportModal.classList.add('open');
+        });
+
+        document.getElementById('btnCloseModal').addEventListener('click', () => {
+            reportModal.classList.remove('open');
+        });
+
+        reportModal.addEventListener('click', (e) => {
+            if (e.target === reportModal) {
+                reportModal.classList.remove('open');
+            }
+        });
+
+        function generateReport() {
+            const staff = getStaff();
+            const allAtt = getAttendance();
+            const container = document.getElementById('reportContainer');
+
+            let html = '';
+
+            if (staff.length === 0) {
+                container.innerHTML = '<p>No staff available for report.</p>';
+                return;
+            }
+
+            staff.forEach(worker => {
+                let totalFull = 0;
+                let totalHalf = 0;
+                let totalEarned = 0;
+                let totalAdvance = 0;
+
+                let advanceDaysHtml = ''; // For the table inside report
+
+                // Iterate over all dates in storage
+                Object.keys(allAtt).sort().forEach(dateKey => {
+                    const dailyRecord = allAtt[dateKey][worker.id];
+                    if (!dailyRecord) return;
+
+                    const hasMorning = dailyRecord.morning;
+                    const hasEvening = dailyRecord.evening;
+                    const adv = dailyRecord.advance || 0;
+
+                    let workType = 'Absent';
+                    let earnedToday = 0;
+
+                    if (hasMorning && hasEvening) {
+                        workType = 'Full Day';
+                        totalFull++;
+                        earnedToday = worker.salary;
+                    } else if (hasMorning || hasEvening) {
+                        workType = 'Half Day';
+                        totalHalf++;
+                        earnedToday = worker.salary / 2;
+                    }
+
+                    totalEarned += earnedToday;
+                    totalAdvance += adv;
+
+                    // Log advance history strictly where advance > 0
+                    if (adv > 0) {
+                        const displayDate = new Date(dateKey).toLocaleDateString('en-GB');
+                        advanceDaysHtml += `
+                        <tr>
+                            <td>${displayDate}</td>
+                            <td>${workType}</td>
+                            <td style="color: var(--danger-color); font-weight: 500;">₹${adv}</td>
+                        </tr>
+                    `;
+                    }
+                });
+
+                const balance = totalEarned - totalAdvance;
+                const balanceColor = balance >= 0 ? 'var(--success-color)' : 'var(--danger-color)';
+
+                html += `
+                <div class="report-card">
+                    <div class="report-worker-name">${worker.name} <span style="font-size: 0.9rem; color: var(--text-muted); font-weight: normal;">(₹${worker.salary}/day)</span></div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-value">${totalFull}</div>
+                            <div class="stat-label">Full Days</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value">${totalHalf}</div>
+                            <div class="stat-label">Half Days</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" style="color: var(--primary-color);">₹${totalEarned}</div>
+                            <div class="stat-label">Earned</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" style="color: var(--danger-color);">₹${totalAdvance}</div>
+                            <div class="stat-label">Advance</div>
+                        </div>
+                        <div class="stat-box" style="border-color: ${balanceColor};">
+                            <div class="stat-value" style="color: ${balanceColor};">₹${balance}</div>
+                            <div class="stat-label">Balance To Pay</div>
+                        </div>
+                    </div>
+                    
+                    ${advanceDaysHtml ? `
+                        <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase;">Advance History</h4>
+                        <table class="advance-history-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Work Type</th>
+                                    <th>Advance Given</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${advanceDaysHtml}
+                            </tbody>
+                        </table>
+                    ` : `<p style="font-size: 0.9rem; color: var(--text-muted); font-style: italic;">No advances on record.</p>`}
+                </div>
+            `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Initial render
+        renderTable();
+
+    </script>
+</body>
+
+</html>

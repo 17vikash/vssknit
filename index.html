@@ -1,0 +1,1609 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vss DC - Management System</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-icon">M</div>
+        <div class="logo-text">
+          <span class="logo-title">Vss DC</span>
+          <span class="logo-subtitle">Management System</span>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active" data-page="dashboard">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+          </svg>
+          <span class="nav-label">Dashboard</span>
+        </a>
+        <a href="#" class="nav-item" data-page="received">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path
+              d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+            <line x1="12" y1="22.08" x2="12" y2="12" />
+          </svg>
+          <span class="nav-label">Received Cloth</span>
+        </a>
+        <a href="#" class="nav-item" data-page="delivery">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="1" y="3" width="15" height="13" />
+            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+            <circle cx="5.5" cy="18.5" r="2.5" />
+            <circle cx="18.5" cy="18.5" r="2.5" />
+          </svg>
+          <span class="nav-label">Delivery</span>
+        </a>
+        <a href="#" class="nav-item" data-page="invoices">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+            <polyline points="10 9 9 9 8 9" />
+          </svg>
+          <span class="nav-label">Invoices</span>
+        </a>
+        <a href="#" class="nav-item" data-page="party-master">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+          <span class="nav-label">Party Master</span>
+        </a>
+        <a href="#" class="nav-item" data-page="dyeing-master">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v4" />
+            <path d="M12 18v4" />
+            <path d="M4.93 4.93l2.83 2.83" />
+            <path d="M16.24 16.24l2.83 2.83" />
+            <path d="M2 12h4" />
+            <path d="M18 12h4" />
+            <path d="M4.93 19.07l2.83-2.83" />
+            <path d="M16.24 7.76l2.83-2.83" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+          <span class="nav-label">Dyeing Master</span>
+        </a>
+        <a href="#" class="nav-item" data-page="company-settings">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3" />
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+          </svg>
+          <span class="nav-label">Company Settings</span>
+        </a>
+        <a href="#" class="nav-item" data-page="attendance">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+          <span class="nav-label">Attendance</span>
+        </a>
+      </nav>
+      <button class="collapse-btn" id="collapseBtn" aria-label="Collapse sidebar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6" />
+        </svg>
+        <span class="collapse-label">Collapse</span>
+      </button>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="header">
+        <div class="header-left">
+          <h1 class="page-title" id="pageTitle">Dashboard</h1>
+          <p class="page-date" id="pageDate">Mon, 16 Feb, 2026</p>
+        </div>
+        <div class="header-right">
+          <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input type="text" placeholder="Search..." class="search-input">
+          </div>
+          <button class="icon-btn" aria-label="Notifications">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            </svg>
+          </button>
+          <div class="avatar">AD</div>
+        </div>
+      </header>
+
+      <style>
+        /* Compacting Attendance Custom Styles */
+        .att-container {
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+          background-color: var(--main-bg);
+        }
+
+        .att-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border-bottom: 2px solid var(--border-color);
+          padding-bottom: 15px;
+          margin-bottom: 20px;
+        }
+
+        .att-time {
+          font-size: 1.2rem;
+          font-weight: 600;
+          color: var(--accent-blue);
+        }
+
+        .att-date {
+          font-size: 1rem;
+          color: var(--text-secondary);
+        }
+
+        .att-section {
+          background: white;
+          padding: 20px;
+          border-radius: 12px;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+          margin-bottom: 24px;
+        }
+
+        .att-section h2 {
+          margin-top: 0;
+          font-size: 1.25rem;
+          margin-bottom: 16px;
+          color: var(--text-primary);
+        }
+
+        .att-form-row {
+          display: flex;
+          gap: 15px;
+          align-items: center;
+          flex-wrap: wrap;
+        }
+
+        .att-form-group {
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+          min-width: 200px;
+        }
+
+        .att-form-group label {
+          font-size: 0.85rem;
+          font-weight: 500;
+          color: var(--text-secondary);
+        }
+
+        .att-input {
+          padding: 8px 12px;
+          border: 1px solid var(--border-color);
+          border-radius: 6px;
+          font-size: 0.95rem;
+        }
+
+        .att-btn {
+          background-color: var(--accent-blue);
+          color: white;
+          border: none;
+          padding: 8px 16px;
+          border-radius: 6px;
+          cursor: pointer;
+          font-weight: 500;
+          transition: background 0.2s;
+          align-self: flex-end;
+        }
+
+        .att-btn:hover {
+          background-color: var(--accent-hover);
+        }
+
+        .att-btn-outline {
+          background: transparent;
+          color: var(--text-primary);
+          border: 1px solid var(--border-color);
+        }
+
+        .att-btn-outline:hover {
+          background: #f3f4f6;
+        }
+
+        .att-table-wrapper {
+          overflow-x: auto;
+          margin-top: 15px;
+        }
+
+        .att-table {
+          width: 100%;
+          border-collapse: collapse;
+          text-align: left;
+        }
+
+        .att-table th {
+          background-color: #f9fafb;
+          padding: 12px;
+          font-weight: 600;
+          border-bottom: 2px solid var(--border-color);
+          color: var(--text-secondary);
+          text-transform: uppercase;
+          font-size: 0.8rem;
+          letter-spacing: 0.05em;
+        }
+
+        .att-table td {
+          padding: 12px;
+          border-bottom: 1px solid var(--border-color);
+          vertical-align: middle;
+        }
+
+        .att-table td input[type="number"] {
+          width: 80px;
+          padding: 6px;
+          border: 1px solid var(--border-color);
+          border-radius: 4px;
+        }
+
+        .att-table td input[type="checkbox"] {
+          width: 18px;
+          height: 18px;
+          cursor: pointer;
+        }
+
+        .att-delete-btn {
+          color: #ef4444;
+          background: none;
+          border: none;
+          cursor: pointer;
+          border-radius: 4px;
+          padding: 6px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .att-delete-btn:hover {
+          background: #fef2f2;
+        }
+
+        /* Report Modal Styles */
+        .att-report-modal {
+          display: none;
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.5);
+          z-index: 100;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .att-report-modal.active {
+          display: flex;
+        }
+
+        .att-report-content {
+          background: white;
+          width: 90%;
+          max-width: 800px;
+          max-height: 90vh;
+          border-radius: 12px;
+          overflow-y: auto;
+          padding: 24px;
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .att-report-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 20px;
+        }
+
+        .att-report-close {
+          background: none;
+          border: none;
+          font-size: 1.5rem;
+          cursor: pointer;
+          color: var(--text-secondary);
+        }
+
+        .worker-report-card {
+          border: 1px solid var(--border-color);
+          border-radius: 8px;
+          padding: 16px;
+          margin-bottom: 16px;
+        }
+
+        .worker-report-name {
+          font-size: 1.1rem;
+          font-weight: bold;
+          margin-bottom: 10px;
+          color: var(--accent-blue);
+          border-bottom: 1px solid var(--border-color);
+          padding-bottom: 8px;
+        }
+
+        .worker-report-stats {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+          gap: 10px;
+          margin-bottom: 15px;
+        }
+
+        .stat-box {
+          background: #f9fafb;
+          padding: 10px;
+          border-radius: 6px;
+          text-align: center;
+        }
+
+        .stat-value {
+          font-size: 1.2rem;
+          font-weight: bold;
+          color: var(--text-primary);
+        }
+
+        .stat-label {
+          font-size: 0.75rem;
+          color: var(--text-secondary);
+          text-transform: uppercase;
+        }
+      </style>
+
+      <div class="content">
+        <!-- Compacting Attendance Page -->
+        <section class="page att-container" id="page-attendance" style="display: none;">
+          <div class="att-header">
+            <div>
+              <h1 style="margin: 0; font-size: 1.5rem; color: var(--text-primary);">Compacting Attendance System</h1>
+            </div>
+            <div style="text-align: right;">
+              <div class="att-time" id="attLiveTime">--:--:--</div>
+              <div class="att-date" id="attLiveDate">Processing...</div>
+            </div>
+          </div>
+
+          <div class="att-section">
+            <h2>Add New Staff</h2>
+            <div class="att-form-row">
+              <div class="att-form-group">
+                <label>Worker Name</label>
+                <input type="text" id="attStaffName" class="att-input" placeholder="e.g. Kannan">
+              </div>
+              <div class="att-form-group">
+                <label>Daily Salary (₹)</label>
+                <input type="number" id="attStaffSalary" class="att-input" placeholder="e.g. 500" min="0">
+              </div>
+              <button class="att-btn" id="attBtnAddStaff">Add Worker</button>
+            </div>
+          </div>
+
+          <div class="att-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+              <h2>Daily Attendance</h2>
+              <div class="att-form-row" style="align-items: center; gap: 10px;">
+                <label style="font-weight: 500; font-size: 0.9rem;">Select Date:</label>
+                <input type="date" id="attDateSelector" class="att-input">
+                <button class="att-btn att-btn-outline" id="attBtnViewReport" style="margin-left: 20px;">View Work
+                  Report</button>
+              </div>
+            </div>
+
+            <div class="att-table-wrapper">
+              <table class="att-table">
+                <thead>
+                  <tr>
+                    <th>Worker Name</th>
+                    <th>Salary (₹)</th>
+                    <th>Morning</th>
+                    <th>Evening</th>
+                    <th>Advance (₹)</th>
+                    <th style="text-align: center;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="attTableBody">
+                  <!-- Rows generated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Attendance Work Report Modal -->
+        <div class="att-report-modal" id="attReportModal">
+          <div class="att-report-content">
+            <div class="att-report-header">
+              <h2 style="margin: 0;">Comprehensive Work & Advance Report</h2>
+              <button class="att-report-close" id="attBtnCloseReport">&times;</button>
+            </div>
+            <div id="attReportBody">
+              <!-- Report populates dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard Page -->
+        <section class="page active" id="page-dashboard">
+          <div class="metrics-row">
+            <div class="metric-card">
+              <div class="metric-info">
+                <p class="metric-label">Total Received</p>
+                <p class="metric-value" id="dashTotalReceived">0</p>
+              </div>
+              <div class="metric-icon metric-icon-received">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path
+                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                </svg>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-info">
+                <p class="metric-label">Total Delivered</p>
+                <p class="metric-value" id="dashTotalDelivered">0</p>
+              </div>
+              <div class="metric-icon metric-icon-delivery">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="1" y="3" width="15" height="13" />
+                  <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+                  <circle cx="5.5" cy="18.5" r="2.5" />
+                  <circle cx="18.5" cy="18.5" r="2.5" />
+                </svg>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-info">
+                <p class="metric-label">Pending (Received)</p>
+                <p class="metric-value" id="dashPending">0</p>
+              </div>
+              <div class="metric-icon metric-icon-pending">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-info">
+                <p class="metric-label">Today Received</p>
+                <p class="metric-value" id="dashTodayReceived">0</p>
+              </div>
+              <div class="metric-icon metric-icon-today">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                  <polyline points="17 6 23 6 23 12" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions-row">
+            <a href="#" class="action-card" data-page="received" data-show-form="true">
+              <div class="action-icon action-icon-received">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path
+                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                </svg>
+              </div>
+              <div class="action-content">
+                <h3>New Inward Entry</h3>
+                <p>Record received cloth</p>
+              </div>
+              <svg class="action-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </a>
+            <a href="#" class="action-card" data-page="delivery" data-show-form="true">
+              <div class="action-icon action-icon-delivery">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="1" y="3" width="15" height="13" />
+                  <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+                  <circle cx="5.5" cy="18.5" r="2.5" />
+                  <circle cx="18.5" cy="18.5" r="2.5" />
+                </svg>
+              </div>
+              <div class="action-content">
+                <h3>New Delivery</h3>
+                <p>Create delivery challan</p>
+              </div>
+              <svg class="action-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </a>
+          </div>
+
+          <div class="recent-row">
+            <div class="recent-card">
+              <div class="recent-header">
+                <h3>Recent Received</h3>
+                <a href="#" class="view-all" data-page="received">View All</a>
+              </div>
+              <div class="recent-list" id="recentReceivedList">
+                <p class="empty-state">No received entries yet</p>
+              </div>
+            </div>
+            <div class="recent-card">
+              <div class="recent-header">
+                <h3>Recent Deliveries</h3>
+                <a href="#" class="view-all" data-page="delivery">View All</a>
+              </div>
+              <div class="recent-list recent-empty" id="recentDeliveriesList">
+                <p class="empty-state">No deliveries yet</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="master-row">
+            <a href="#" class="master-card" data-page="party-master">
+              <div class="master-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+              </div>
+              <div class="master-content">
+                <h3>3 Parties</h3>
+                <p>Manage party master</p>
+              </div>
+            </a>
+            <a href="#" class="master-card" data-page="dyeing-master">
+              <div class="master-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2v4" />
+                  <path d="M12 18v4" />
+                  <path d="M4.93 4.93l2.83 2.83" />
+                  <path d="M16.24 16.24l2.83 2.83" />
+                  <path d="M2 12h4" />
+                  <path d="M18 12h4" />
+                  <path d="M4.93 19.07l2.83-2.83" />
+                  <path d="M16.24 7.76l2.83-2.83" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </div>
+              <div class="master-content">
+                <h3>3 Dyeing Units</h3>
+                <p>Manage dyeing master</p>
+              </div>
+            </a>
+          </div>
+        </section>
+
+        <!-- Received Cloth - List + Inward Entry -->
+        <section class="page" id="page-received">
+          <div class="received-list-view" id="receivedListView">
+            <div class="list-toolbar">
+              <div class="list-search">
+                <input type="text" id="receivedSearch" placeholder="Search by INW No, Party, Fabric...">
+              </div>
+              <button type="button" class="btn-new-inward" id="btnNewInward">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                New Inward Entry
+              </button>
+            </div>
+            <div class="list-table-wrap">
+              <table class="received-table">
+                <thead>
+                  <tr>
+                    <th>INW No</th>
+                    <th>DC No</th>
+                    <th>Party</th>
+                    <th>Party DC</th>
+                    <th>Dyeing</th>
+                    <th>Dyeing DC</th>
+                    <th>Our Wt</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="receivedTableBody">
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="inward-form-view" id="inwardFormView" style="display:none">
+            <div class="inward-form">
+              <div class="form-section form-header-section">
+                <h2 class="form-title">INWARD ENTRY</h2>
+                <div class="form-grid form-header-grid">
+                  <div class="form-row">
+                    <label>Date</label>
+                    <div class="input-with-icon">
+                      <input type="date" id="inwDate">
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <label>INW No</label>
+                    <input type="text" id="inwNo" readonly placeholder="Auto">
+                  </div>
+                  <div class="form-row">
+                    <label>Party Name *</label>
+                    <div class="input-with-btn">
+                      <div class="custom-select-wrapper" id="wrapper_partyName">
+                        <div class="custom-select">
+                          <div class="custom-select__trigger">
+                            <input type="text" class="custom-select-search" id="search_partyName"
+                              placeholder="Select Party" autocomplete="off">
+                            <input type="hidden" id="partyName">
+                            <div class="arrow"></div>
+                          </div>
+                          <div class="custom-options" id="options_partyName"></div>
+                        </div>
+                      </div>
+                      <button type="button" class="btn-secondary"
+                        onclick="document.getElementById('btnNewParty').click();">New</button>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <label>Type of Process</label>
+                    <div class="input-with-btn">
+                      <select id="typeOfProcess">
+                        <option value="COMPACTING" selected>COMPACTING</option>
+                        <option value="DYEING">DYEING</option>
+                        <option value="WASHING">WASHING</option>
+                        <option value="OTHER">OTHER</option>
+                      </select>
+                      <button type="button" class="btn-secondary">Process Change</button>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <label>Dyeing Name</label>
+                    <div class="input-with-btn">
+                      <div class="custom-select-wrapper" id="wrapper_dyeingName">
+                        <div class="custom-select">
+                          <div class="custom-select__trigger">
+                            <input type="text" class="custom-select-search" id="search_dyeingName"
+                              placeholder="Select Dyeing Unit" autocomplete="off">
+                            <input type="hidden" id="dyeingName">
+                            <div class="arrow"></div>
+                          </div>
+                          <div class="custom-options" id="options_dyeingName"></div>
+                        </div>
+                      </div>
+                      <button type="button" class="btn-secondary"
+                        onclick="document.getElementById('btnNewDyeing').click();">Add New Dyeing</button>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <label>Dy. Dc No</label>
+                    <input type="text" id="dyDcNo" placeholder="">
+                  </div>
+                  <div class="form-row">
+                    <label>Lot/Batch No</label>
+                    <input type="text" id="lotNo" placeholder="">
+                  </div>
+                  <div class="form-row">
+                    <label>Party Dc No</label>
+                    <input type="text" id="partyDcNo" placeholder="">
+                  </div>
+                  <div class="form-row">
+                    <label>Party Order/Style No</label>
+                    <input type="text" id="partyOrder" placeholder="">
+                  </div>
+                  <div class="form-row form-row-full">
+                    <label>Remarks</label>
+                    <textarea id="remarks" rows="2" placeholder=""></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section form-item-section">
+                <h3>Item Entry</h3>
+                <div class="item-input-row">
+                  <input type="text" id="itemColour" placeholder="Colour" list="colourList">
+                  <input type="text" id="itemFabric" placeholder="Fabric / Description" list="fabricList">
+                  <input type="number" id="itemDia" placeholder="Dia" value="0" min="0" step="0.1">
+                  <input type="number" id="itemRoll" placeholder="Roll/Pcs" min="0" step="1">
+                  <input type="number" id="itemDyDcWt" placeholder="Dy. Dc Wt" min="0" step="0.001">
+                  <input type="number" id="itemReceivedWt" placeholder="Received Wt" min="0" step="0.001">
+                  <button type="button" class="btn-add-row" id="btnAddRow" title="Add Row">+</button>
+                </div>
+                <datalist id="colourList">
+                  <option value="NAVY MELANGE">
+                  <option value="BLACK">
+                  <option value="WHITE">
+                  <option value="GREY">
+                </datalist>
+                <datalist id="fabricList">
+                  <option value="S/J">
+                  <option value="RIB">
+                  <option value="INTERLOCK">
+                  <option value="SINGLE JERSEY">
+                </datalist>
+
+                <div class="grid-info">
+                  Click 'X' to Delete Row | Press Ctrl+N or Click '+' to Add Row | Double-click to Modify
+                </div>
+                <div class="grid-wrapper">
+                  <table class="data-grid" id="itemGrid">
+                    <thead>
+                      <tr>
+                        <th>SNo</th>
+                        <th>Colour</th>
+                        <th>Fabric / Description</th>
+                        <th>Dia</th>
+                        <th>Roll/Pcs</th>
+                        <th>Dy. Dc Wt</th>
+                        <th>Received Wt</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody id="itemGridBody">
+                      <!-- Rows added by JS -->
+                    </tbody>
+                  </table>
+                </div>
+                <div class="totals-row">
+                  <div class="total-field">
+                    <label>Total Roll</label>
+                    <input type="text" id="totalRoll" readonly>
+                  </div>
+                  <div class="total-field">
+                    <label>Total Dy. Dc Wt</label>
+                    <input type="text" id="totalDyDcWt" readonly>
+                  </div>
+                  <div class="total-field">
+                    <label>Total Received Wt</label>
+                    <input type="text" id="totalReceivedWt" readonly>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn-action" onclick="addRowFromInputs()">Add Row</button>
+                <button type="button" class="btn-action" id="btnSave" onclick="saveInwardEntry()">Save</button>
+                <button type="button" class="btn-action btn-print" id="btnPrint"
+                  onclick="collectFormData(); printReceivedChallan();">Print</button>
+                <button type="button" class="btn-action" id="btnBackToList" onclick="showReceivedList()">Back to
+                  List</button>
+                <button type="button" class="btn-action" id="btnExit" data-page="dashboard"
+                  onclick="navigate('dashboard')">Exit</button>
+              </div>
+              <div class="form-footer">
+                <span>Entered User ID: <strong id="enteredUser">AD</strong></span>
+                <span>Dt of Entry: <strong id="entryDate">--</strong></span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Delivery - List + Entry -->
+        <section class="page" id="page-delivery">
+          <div class="received-list-view" id="deliveryListView">
+            <div class="list-toolbar">
+              <div class="list-search">
+                <input type="text" id="deliverySearch" placeholder="Search by Delivery DC, INW No, Party...">
+              </div>
+              <button type="button" class="btn-new-inward" id="btnNewDelivery">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                New Delivery
+              </button>
+            </div>
+            <div class="list-table-wrap">
+              <table class="received-table">
+                <thead>
+                  <tr>
+                    <th>DC No</th>
+                    <th>Date</th>
+                    <th>Party</th>
+                    <th>Total Roll</th>
+                    <th>Total Del Wt</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="deliveryTableBody">
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="inward-form-view" id="deliveryFormView" style="display:none">
+            <div class="inward-form">
+              <div class="form-section form-header-section">
+                <h2 class="form-title">DELIVERY ENTRY</h2>
+                <div class="form-grid form-header-grid">
+                  <div class="form-row">
+                    <label>Date</label>
+                    <div class="input-with-icon">
+                      <input type="date" id="delDate">
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <label>DC No</label>
+                    <input type="text" id="delDcNo" readonly placeholder="Auto">
+                  </div>
+                  <div class="form-row">
+                    <label>Inward No</label>
+                    <input type="text" id="delInwNo" placeholder="Enter INW No to auto-fill">
+                  </div>
+                  <div class="form-row">
+                    <label>Party Name</label>
+                    <div class="input-with-btn">
+                      <div class="custom-select-wrapper" id="wrapper_delPartyName">
+                        <div class="custom-select">
+                          <div class="custom-select__trigger">
+                            <input type="text" class="custom-select-search" id="search_delPartyName"
+                              placeholder="Select Party" autocomplete="off">
+                            <input type="hidden" id="delPartyName">
+                            <div class="arrow"></div>
+                          </div>
+                          <div class="custom-options" id="options_delPartyName"></div>
+                        </div>
+                      </div>
+                      <button type="button" class="btn-secondary"
+                        onclick="document.getElementById('btnNewParty').click();">New</button>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <label>Send To</label>
+                    <input type="text" id="delSendTo" placeholder="">
+                  </div>
+                  <div class="form-row">
+                    <label>Vehicle No</label>
+                    <input type="text" id="delVehicleNo" placeholder="">
+                  </div>
+                  <div class="form-row form-row-full">
+                    <label>Remarks</label>
+                    <textarea id="delRemarks" rows="2" placeholder=""></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section form-item-section">
+                <h3>Delivery Details</h3>
+                <div class="grid-info" style="margin-bottom: 10px;">
+                  Enter an Inward No above and press Enter or click away to automatically fetch available items, OR add
+                  items manually below.
+                </div>
+                <div class="item-input-row" style="grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));">
+                  <input type="text" id="delItemColour" placeholder="Colour" list="colourList">
+                  <input type="number" id="delItemDia" placeholder="Dia" min="0" step="0.1">
+                  <input type="text" id="delItemFabric" placeholder="Fabric" list="fabricList">
+                  <input type="text" id="delItemProcess" placeholder="Process">
+                  <input type="number" id="delItemRoll" placeholder="Del Roll" min="0" step="1">
+                  <input type="number" id="delItemWt" placeholder="Del Wt" min="0" step="0.001">
+                  <input type="text" id="delItemPOrder" placeholder="P Order">
+                  <input type="text" id="delItemPLot" placeholder="P Lot">
+                  <button type="button" class="btn-add-row" id="btnDelAddRow" title="Add Row"
+                    onclick="addDeliveryRowFromInputs()">+</button>
+                </div>
+                <div class="grid-wrapper">
+                  <table class="data-grid" id="delItemGrid">
+                    <thead>
+                      <tr>
+                        <th>S.No</th>
+                        <th>Inw No</th>
+                        <th>Colour</th>
+                        <th>Dia</th>
+                        <th>Fabric</th>
+                        <th>Process</th>
+                        <th>Del Roll</th>
+                        <th>Del Wt</th>
+                        <th>P Order</th>
+                        <th>P Lot</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody id="delItemGridBody">
+                    </tbody>
+                  </table>
+                </div>
+                <div class="totals-row">
+                  <div class="total-field">
+                    <label>Total Roll</label>
+                    <input type="text" id="delTotalRoll" readonly>
+                  </div>
+                  <div class="total-field">
+                    <label>Total Del Wt</label>
+                    <input type="text" id="delTotalDelWt" readonly>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn-action" id="btnDelSave">Save</button>
+                <button type="button" class="btn-action btn-print" id="btnDelPrint">Print</button>
+                <button type="button" class="btn-action" id="btnDelBackToList">Back to List</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Invoices - List + Entry -->
+        <section class="page" id="page-invoices">
+          <div class="received-list-view" id="invoiceListView">
+            <div class="list-toolbar">
+              <div class="list-search">
+                <input type="text" id="invoiceSearch" placeholder="Search by Invoice No, Party, DC No...">
+              </div>
+              <button type="button" class="btn-new-inward" id="btnNewInvoice">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                New Invoice
+              </button>
+            </div>
+            <div class="list-table-wrap">
+              <table class="received-table">
+                <thead>
+                  <tr>
+                    <th>Inv No</th>
+                    <th>Date</th>
+                    <th>Party</th>
+                    <th>DC No</th>
+                    <th>Bill Amount</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="invoiceTableBody">
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="inward-form-view" id="invoiceFormView" style="display:none">
+            <div class="inward-form">
+              <div class="form-section form-header-section">
+                <h2 class="form-title">INVOICE GST</h2>
+                <div class="form-grid form-header-grid">
+                  <div class="form-row">
+                    <label>Date</label>
+                    <div class="input-with-icon">
+                      <input type="date" id="invDate">
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <label>Invoice No</label>
+                    <input type="text" id="invNo" readonly placeholder="Auto">
+                  </div>
+                  <div class="form-row">
+                    <label>Customer</label>
+                    <div class="input-with-btn">
+                      <div class="custom-select-wrapper" id="wrapper_invPartyName">
+                        <div class="custom-select">
+                          <div class="custom-select__trigger">
+                            <input type="text" class="custom-select-search" id="search_invPartyName"
+                              placeholder="Select Party" autocomplete="off">
+                            <input type="hidden" id="invPartyName">
+                            <div class="arrow"></div>
+                          </div>
+                          <div class="custom-options" id="options_invPartyName"></div>
+                        </div>
+                      </div>
+                      <button type="button" class="btn-secondary"
+                        onclick="document.getElementById('btnNewParty').click();">New</button>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <label>Delivery DC No</label>
+                    <input type="text" id="invDcNo" placeholder="">
+                  </div>
+                  <div class="form-row">
+                    <label>Order No</label>
+                    <input type="text" id="invOrderNo" placeholder="">
+                  </div>
+                  <div class="form-row form-row-full">
+                    <label>Narration</label>
+                    <textarea id="invNarration" rows="2" placeholder=""></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section form-item-section">
+                <h3>Invoice Details</h3>
+                <div class="item-input-row" style="grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));">
+                  <input type="text" id="invItemDesc" placeholder="Description / Process">
+                  <input type="text" id="invItemColour" placeholder="Colour" list="colourList">
+                  <input type="number" id="invItemDia" placeholder="Dia" min="0" step="0.1">
+                  <input type="number" id="invItemQty" placeholder="Qty" min="0" step="0.01">
+                  <input type="number" id="invItemRate" placeholder="Rate" min="0" step="0.01">
+                  <button type="button" class="btn-add-row" id="btnInvAddRow" title="Add Row">+</button>
+                </div>
+                <div class="grid-info">
+                  Click 'X' to Delete Row | Double-click to Modify
+                </div>
+                <div class="grid-wrapper">
+                  <table class="data-grid" id="invItemGrid">
+                    <thead>
+                      <tr>
+                        <th>SNo</th>
+                        <th>Description</th>
+                        <th>Colour</th>
+                        <th>Dia</th>
+                        <th>Qty</th>
+                        <th>Rate</th>
+                        <th>Amount</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody id="invItemGridBody">
+                    </tbody>
+                  </table>
+                </div>
+                <div class="totals-row">
+                  <div class="total-field">
+                    <label>Sub Total</label>
+                    <input type="text" id="invSubTotal" readonly>
+                  </div>
+                  <div class="total-field">
+                    <label>GST %</label>
+                    <input type="number" id="invGstPercent" value="18" min="0" step="0.1">
+                  </div>
+                  <div class="total-field">
+                    <label>GST Amount</label>
+                    <input type="text" id="invGstAmount" readonly>
+                  </div>
+                  <div class="total-field">
+                    <label>Total Bill Amount</label>
+                    <input type="text" id="invTotalAmount" readonly>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn-action" id="btnInvSave">Save</button>
+                <button type="button" class="btn-action btn-print" id="btnInvPrint">Print</button>
+                <button type="button" class="btn-action" id="btnInvBackToList">Back to List</button>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="page" id="page-party-master">
+          <!-- Party Master List View -->
+          <div class="received-list-view" id="partyListView">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+              <div>
+                <h2 style="margin: 0; font-size: 1.5rem; font-weight: 600;">Party Master</h2>
+                <p style="margin: 4px 0 0 0; color: var(--text-secondary); font-size: 0.9rem;">Manage party names for
+                  cloth transactions</p>
+              </div>
+              <button type="button" class="btn-new-inward" id="btnNewParty" style="background: #f59e0b;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                Add Party
+              </button>
+            </div>
+            <div class="list-toolbar">
+              <div class="list-search">
+                <div class="search-box"
+                  style="padding: 10px 16px; border: 1px solid #d1d5db; border-radius: 8px; background: white; width: 100%; max-width: 500px;">
+                  <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                  <input type="text" id="partySearch" placeholder="Search parties..." class="search-input"
+                    style="width: 100%;">
+                </div>
+              </div>
+            </div>
+            <div class="list-table-wrap">
+              <table class="received-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Phone</th>
+                    <th style="text-align: right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="partyTableBody">
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Party Master Form View -->
+          <div class="inward-form-view" id="partyFormView" style="display:none">
+            <div class="inward-form" style="max-width: 800px; margin: 0 auto;">
+              <div class="form-section form-header-section">
+                <h2 class="form-title" id="partyFormTitle">ADD NEW PARTY</h2>
+                <input type="hidden" id="partyEditId">
+                <div class="form-grid form-header-grid">
+                  <div class="form-row">
+                    <label>Party Name *</label>
+                    <input type="text" id="partyFormName" placeholder="e.g. Sri Balaji Textiles">
+                  </div>
+                  <div class="form-row">
+                    <label>Phone Number</label>
+                    <input type="text" id="partyFormPhone" placeholder="e.g. 9876543210">
+                  </div>
+                  <div class="form-row">
+                    <label>GSTIN</label>
+                    <input type="text" id="partyFormGstin" placeholder="e.g. 33AAAAA0000A1Z5">
+                  </div>
+                  <div class="form-row form-row-full">
+                    <label>Address</label>
+                    <textarea id="partyFormAddress" rows="2" placeholder="e.g. Tirupur"></textarea>
+                  </div>
+                </div>
+              </div>
+              <div class="form-actions" style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
+                <button type="button" class="btn-action" id="btnPartySave"
+                  style="background: var(--accent-blue); color: white; border: none;">Save Party</button>
+                <button type="button" class="btn-action" id="btnPartyCancel">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="page" id="page-dyeing-master">
+          <!-- Dyeing Master List View -->
+          <div class="received-list-view" id="dyeingListView">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+              <div>
+                <h2 style="margin: 0; font-size: 1.5rem; font-weight: 600;">Dyeing Master</h2>
+                <p style="margin: 4px 0 0 0; color: var(--text-secondary); font-size: 0.9rem;">Manage dyeing & finishing
+                  units</p>
+              </div>
+              <button type="button" class="btn-new-inward" id="btnNewDyeing" style="background: #f59e0b;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                Add Dyeing
+              </button>
+            </div>
+            <div class="list-toolbar">
+              <div class="list-search">
+                <div class="search-box"
+                  style="padding: 10px 16px; border: 1px solid #d1d5db; border-radius: 8px; background: white; width: 100%; max-width: 500px;">
+                  <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                  <input type="text" id="dyeingSearch" placeholder="Search dyeing units..." class="search-input"
+                    style="width: 100%;">
+                </div>
+              </div>
+            </div>
+            <div class="list-table-wrap">
+              <table class="received-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Phone</th>
+                    <th style="text-align: right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="dyeingTableBody">
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Dyeing Master Form View -->
+          <div class="inward-form-view" id="dyeingFormView" style="display:none">
+            <div class="inward-form" style="max-width: 800px; margin: 0 auto;">
+              <div class="form-section form-header-section">
+                <h2 class="form-title" id="dyeingFormTitle">ADD NEW DYEING UNIT</h2>
+                <input type="hidden" id="dyeingEditId">
+                <div class="form-grid form-header-grid">
+                  <div class="form-row">
+                    <label>Unit Name *</label>
+                    <input type="text" id="dyeingFormName" placeholder="e.g. VSS Dyeing Works">
+                  </div>
+                  <div class="form-row">
+                    <label>Phone Number</label>
+                    <input type="text" id="dyeingFormPhone" placeholder="e.g. 9876543220">
+                  </div>
+                  <div class="form-row form-row-full">
+                    <label>Address</label>
+                    <textarea id="dyeingFormAddress" rows="2" placeholder="e.g. Tirupur"></textarea>
+                  </div>
+                </div>
+              </div>
+              <div class="form-actions" style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
+                <button type="button" class="btn-action" id="btnDyeingSave"
+                  style="background: var(--accent-blue); color: white; border: none;">Save Unit</button>
+                <button type="button" class="btn-action" id="btnDyeingCancel">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Company Settings -->
+        <section class="page" id="page-company-settings">
+          <div class="inward-form" style="max-width: 800px; margin: 0 auto;">
+            <div
+              style="display: flex; align-items: center; gap: 16px; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #e5e7eb;">
+              <div
+                style="width: 56px; height: 56px; background: #f3f4f6; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--text-secondary);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  style="width: 28px; height: 28px;">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                  <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+              </div>
+              <div>
+                <h2 style="margin: 0; font-size: 1.5rem; font-weight: 600;">Company Settings</h2>
+                <p style="margin: 4px 0 0 0; color: var(--text-secondary); font-size: 0.9rem;">Manage your company
+                  details for DC prints</p>
+              </div>
+            </div>
+
+            <div class="form-grid form-header-grid">
+              <div class="form-row form-row-full">
+                <label>Company Name *</label>
+                <input type="text" id="settingCompanyName" placeholder="VSS DC MANAGEMENT">
+              </div>
+              <div class="form-row form-row-full">
+                <label>Tagline / Subtitle</label>
+                <input type="text" id="settingTagline" placeholder="Finishing & Processing Unit">
+              </div>
+              <div class="form-row form-row-full">
+                <label>Address *</label>
+                <input type="text" id="settingAddress" placeholder="Tirupur, Tamil Nadu">
+              </div>
+              <div class="form-row">
+                <label>Phone *</label>
+                <input type="text" id="settingPhone" placeholder="9876543210">
+              </div>
+              <div class="form-row">
+                <label>Email</label>
+                <input type="text" id="settingEmail" placeholder="info@vssdc.com">
+              </div>
+              <div class="form-row form-row-full">
+                <label>GST Number</label>
+                <input type="text" id="settingGst" placeholder="33XXXXX1234X1Z5">
+              </div>
+            </div>
+
+            <div class="form-actions" style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
+              <button type="button" class="btn-action" id="btnSettingSave"
+                style="background: var(--accent-blue); color: white; border: none;">Save Settings</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Print-only Received Challan - hidden on screen, shown only when printing -->
+  <div id="receivedChallanPrint" class="received-challan-print print-delivery-layout" aria-hidden="true">
+    <div class="challan-content print-half-a4-delivery">
+      <div class="print-header print-center">
+        <h1 class="print-company-title" id="printCompany">VSS KNIT FINISHERS</h1>
+        <div class="print-company-address">
+          397/1, P.N. Road, Nallur, Tirupur – 641 602<br>
+          Phone: 8754242330, 9698918305<br>
+          GSTIN: 33AAOFV2391K1ZP
+        </div>
+        <div class="print-doc-title" style="position: relative;">
+          <strong>RECEIVED CHALLAN</strong>
+          <span class="print-doc-subtitle"
+            style="position: absolute; right: 0; bottom: 0; font-weight: normal; line-height: 1.2;">
+            (Job Work Purpose Not For Sale)
+          </span>
+        </div>
+      </div>
+
+      <div class="print-bordered-section">
+        <div class="print-to-section" style="padding: 4px;">
+          <strong>To,</strong><br>
+          <strong><span id="printPartyName">--</span></strong>
+        </div>
+
+        <table class="print-meta-table">
+          <tbody>
+            <tr>
+              <td class="meta-label">Received From</td>
+              <td class="meta-separator">:</td>
+              <td class="meta-value"><span id="printDyeingName">--</span></td>
+
+              <td class="meta-label">DC No</td>
+              <td class="meta-separator">:</td>
+              <td class="meta-value"><strong id="printDcNo">--</strong></td>
+            </tr>
+            <tr>
+              <td class="meta-label">Received Wt</td>
+              <td class="meta-separator">:</td>
+              <td class="meta-value"><span id="printReceivedWt">--</span></td>
+
+              <td class="meta-label">Date</td>
+              <td class="meta-separator">:</td>
+              <td class="meta-value"><span id="printDate">--</span></td>
+            </tr>
+            <tr>
+              <td class="meta-label">Dy.Dc.Wt</td>
+              <td class="meta-separator">:</td>
+              <td class="meta-value"><span id="printDyDcWt">--</span></td>
+
+              <td class="meta-label">Our INW.No</td>
+              <td class="meta-separator">:</td>
+              <td class="meta-value"><span id="printInwNo">--</span></td>
+            </tr>
+            <tr>
+              <td class="meta-label">Recd.DC No</td>
+              <td class="meta-separator">:</td>
+              <td class="meta-value"><span id="printDyDcNo">--</span></td>
+
+              <td class="meta-label">Party DC No</td>
+              <td class="meta-separator">:</td>
+              <td class="meta-value"><span id="printPartyDcNo">--</span></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td class="meta-label">Process</td>
+              <td class="meta-separator">:</td>
+              <td class="meta-value"><span id="printProcess">COMPACTING</span></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td class="meta-label">Order No</td>
+              <td class="meta-separator">:</td>
+              <td class="meta-value"><span id="printOrderNo">--</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="print-item-table" style="margin-bottom: 0; border-left: none; border-right: none;">
+          <thead>
+            <tr>
+              <th style="border-left: none;">Lot No</th>
+              <th>Fabric</th>
+              <th>Colour</th>
+              <th>Dia</th>
+              <th>Roll</th>
+              <th style="border-right: none;">Weight</th>
+            </tr>
+          </thead>
+          <tbody id="printGridBody">
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="4" style="text-align: right; font-weight: bold; border-left: none;">GRAND TOTAL</td>
+              <td style="text-align: center; font-weight: bold;" id="printTotalRoll">0</td>
+              <td style="text-align: center; font-weight: bold; border-right: none;" id="printTotalReceivedWt">0.000
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+
+        <div class="print-footer">
+          <div class="print-signature-left">
+            Party's Name &amp; Signature
+          </div>
+          <div class="print-signature-right">
+            <div style="margin-bottom: 25px;">For <strong>VSS DC - Authorised Signatory</strong></div>
+            <div>Authorized Signatory</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Print-only Delivery Challan - hidden on screen, shown only when printing -->
+  <div id="deliveryChallanPrint" class="received-challan-print print-delivery-layout" aria-hidden="true">
+    <div class="challan-content print-a4-delivery">
+      <div class="print-header print-center">
+        <h1 class="print-company-title">VSS KNIT FINISHERS</h1>
+        <div class="print-company-address">
+          397/1, P.N. Road, Nallur, Tirupur – 641 602<br>
+          Phone: 8754242330, 9698918305<br>
+          GSTIN: 33AAOFV2391K1ZP
+        </div>
+        <div class="print-doc-title" style="position: relative;">
+          <strong>DELIVERY CHALLAN</strong>
+          <span class="print-doc-subtitle"
+            style="position: absolute; right: 0; bottom: 0; font-weight: normal; line-height: 1.2;">
+            (Job Work Purpose Not For Sale)
+          </span>
+        </div>
+      </div>
+
+      <div class="print-bordered-section">
+        <div class="print-to-section" style="padding: 4px;">
+          <strong>To,</strong><br>
+          <strong>Ms. <span id="printDelPartyName">--</span></strong><br>
+          <span id="printDelPartyAddress">Elango Nagar, Tirupur</span><br>
+          GSTIN: <span id="printDelPartyGst">_________</span>
+        </div>
+
+        <table class="print-meta-table">
+          <tbody>
+            <tr>
+              <td class="meta-label">Received From</td>
+              <td class="meta-separator">:</td>
+              <td class="meta-value"><span id="printDelDyeingName">--</span></td>
+
+              <td class="meta-label">DC No</td>
+              <td class="meta-separator">:</td>
+              <td class="meta-value"><strong id="printDelDcNo">--</strong></td>
+            </tr>
+            <tr>
+              <td class="meta-label">Received Wt</td>
+              <td class="meta-separator">:</td>
+              <td class="meta-value"><span id="printDelReceivedWt">--</span></td>
+
+              <td class="meta-label">Date</td>
+              <td class="meta-separator">:</td>
+              <td class="meta-value"><span id="printDelDate">--</span></td>
+            </tr>
+            <tr>
+              <td class="meta-label">Dy.Dc.Wt</td>
+              <td class="meta-separator">:</td>
+              <td class="meta-value"><span id="printDelRecdDcNo">--</span></td>
+
+              <td class="meta-label">DC Inw No</td>
+              <td class="meta-separator">:</td>
+              <td class="meta-value"><span id="printDelOurInwNo">--</span></td>
+            </tr>
+            <tr>
+              <td class="meta-label">Vehicle No</td>
+              <td class="meta-separator">:</td>
+              <td class="meta-value"><span id="printDelVehicleNo">--</span></td>
+
+              <td class="meta-label">Recd DC No</td>
+              <td class="meta-separator">:</td>
+              <td class="meta-value"><span id="printDelRecdDcNo2">--</span></td>
+            </tr>
+            <tr>
+              <td class="meta-label">Lot No</td>
+              <td class="meta-separator">:</td>
+              <td class="meta-value"><span id="printDelLotNo">--</span></td>
+
+              <td class="meta-label">Party DC No</td>
+              <td class="meta-separator">:</td>
+              <td class="meta-value"><span id="printDelPartyDcNo">--</span></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td class="meta-label">Process</td>
+              <td class="meta-separator">:</td>
+              <td class="meta-value"><span id="printDelProcess">--</span></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td class="meta-label">Order No</td>
+              <td class="meta-separator">:</td>
+              <td class="meta-value"><span id="printDelOrderNo">--</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="print-item-table" style="margin-bottom: 0; border-left: none; border-right: none;">
+          <thead>
+            <tr>
+              <th style="border-left: none;">Lot No</th>
+              <th>Fabric</th>
+              <th>HSN Code</th>
+              <th>Colour</th>
+              <th>Dia</th>
+              <th>Roll</th>
+              <th style="border-right: none;">Weight</th>
+            </tr>
+          </thead>
+          <tbody id="printDelGridBody">
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="5" style="text-align: right; font-weight: bold; border-left: none;">GRAND TOTAL</td>
+              <td style="text-align: center; font-weight: bold;" id="printDelTotalRoll">0</td>
+              <td style="text-align: center; font-weight: bold; border-right: none;" id="printDelTotalWt">0.000</td>
+            </tr>
+          </tfoot>
+        </table>
+
+        <div class="print-footer">
+          <div class="print-signature-left">
+            Party's Name &amp; Signature
+          </div>
+          <div class="print-signature-right">
+            <div style="margin-bottom: 25px;">For <strong>VSS Knit Finishers</strong></div>
+            <div>Authorized Signatory</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Print-only Invoice - hidden on screen, shown only when printing -->
+  <div id="invoicePrint" class="received-challan-print print-invoice-layout" aria-hidden="true">
+    <div class="print-a4-invoice">
+      <div class="print-header print-center">
+        <h1 class="print-company-title">VSS KNIT FINISHERS</h1>
+        <div class="print-company-address">
+          397/1, P.N. Road, Nallur, Tirupur – 641 602<br>
+          Phone: 8754242330, 9698918305<br>
+          GSTIN: 33AAOFV2391K1ZP
+        </div>
+        <div class="print-doc-title" style="font-size: 14px; margin-top: 5px;">
+          <strong>TAX INVOICE</strong>
+        </div>
+        <div class="print-doc-subtitle">
+          (Job Work Purpose Not For Sale)
+        </div>
+      </div>
+
+      <div class="print-inv-top-row">
+        <div class="print-inv-top-left">
+          <strong>Invoice No:</strong> <span id="printInvNo">--</span><br>
+          <strong>Date:</strong> <span id="printInvDate">--</span>
+        </div>
+        <div class="print-inv-top-right">
+          <strong>DC No:</strong> <span id="printInvDcNo">--</span>
+        </div>
+      </div>
+
+      <div class="print-inv-bill-to">
+        <strong>Bill To:</strong> <span id="printInvPartyName">--</span>
+      </div>
+
+      <hr class="print-hr">
+
+      <table class="print-item-table print-inv-table">
+        <thead>
+          <tr>
+            <th>S.No</th>
+            <th>Description</th>
+            <th>Colour</th>
+            <th>Dia</th>
+            <th>Qty</th>
+            <th>Rate</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody id="printInvGridBody">
+        </tbody>
+      </table>
+
+      <div class="print-inv-summary">
+        <div>Sub Total: <span id="printInvSubTotal">0.00</span></div>
+        <div>GST Amount: <span id="printInvGstAmount">0.00</span></div>
+        <div class="print-inv-grand-total">TOTAL AMOUNT: <span id="printInvTotalAmount">0.00</span></div>
+      </div>
+
+      <div class="print-footer" style="margin-top: 50px;">
+        <div class="print-signature-left">
+          Party's Name &amp; Signature
+        </div>
+        <div class="print-signature-right">
+          For <strong>VSS Knit Finishers</strong><br><br><br>
+          Authorized Signatory
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
