@@ -1939,120 +1939,120 @@ const ATT_STAFF_KEY = 'textile_att_staff';
 const ATT_DATA_KEY = 'textile_att_data';
 
 function initAttendanceSystem() {
-    const dateInput = document.getElementById('attDateSelector');
-    const today = new Date().toISOString().split('T')[0];
+  const dateInput = document.getElementById('attDateSelector');
+  const today = new Date().toISOString().split('T')[0];
 
-    if (!dateInput.value) {
-        dateInput.value = today;
-    }
+  if (!dateInput.value) {
+    dateInput.value = today;
+  }
 
-    setInterval(updateLiveClock, 1000);
-    updateLiveClock();
+  setInterval(updateLiveClock, 1000);
+  updateLiveClock();
 
-    renderAttendanceTable(dateInput.value);
+  renderAttendanceTable(dateInput.value);
 
-    document.getElementById('attBtnAddStaff').addEventListener('click', addStaff);
-    document.getElementById('attBtnViewReport').addEventListener('click', showReport);
-    document.getElementById('attBtnCloseReport').addEventListener('click', () => {
-        document.getElementById('attReportModal').classList.remove('active');
-    });
+  document.getElementById('attBtnAddStaff').addEventListener('click', addStaff);
+  document.getElementById('attBtnViewReport').addEventListener('click', showReport);
+  document.getElementById('attBtnCloseReport').addEventListener('click', () => {
+    document.getElementById('attReportModal').classList.remove('active');
+  });
 
-    dateInput.addEventListener('change', (e) => {
-        renderAttendanceTable(e.target.value);
-    });
+  dateInput.addEventListener('change', (e) => {
+    renderAttendanceTable(e.target.value);
+  });
 }
 
 function updateLiveClock() {
-    const now = new Date();
-    const timeStr = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    const dateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const dateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 
-    const timeEl = document.getElementById('attLiveTime');
-    const dateEl = document.getElementById('attLiveDate');
+  const timeEl = document.getElementById('attLiveTime');
+  const dateEl = document.getElementById('attLiveDate');
 
-    if (timeEl) timeEl.textContent = timeStr;
-    if (dateEl) dateEl.textContent = dateStr;
+  if (timeEl) timeEl.textContent = timeStr;
+  if (dateEl) dateEl.textContent = dateStr;
 }
 
 function getStaff() {
-    try { return JSON.parse(localStorage.getItem(ATT_STAFF_KEY) || '[]'); }
-    catch { return []; }
+  try { return JSON.parse(localStorage.getItem(ATT_STAFF_KEY) || '[]'); }
+  catch { return []; }
 }
 
 function getAttData() {
-    try { return JSON.parse(localStorage.getItem(ATT_DATA_KEY) || '{}'); }
-    catch { return {}; }
+  try { return JSON.parse(localStorage.getItem(ATT_DATA_KEY) || '{}'); }
+  catch { return {}; }
 }
 
 function saveAttData(data) {
-    localStorage.setItem(ATT_DATA_KEY, JSON.stringify(data));
+  localStorage.setItem(ATT_DATA_KEY, JSON.stringify(data));
 }
 
 function addStaff() {
-    const nameInput = document.getElementById('attStaffName');
-    const salaryInput = document.getElementById('attStaffSalary');
+  const nameInput = document.getElementById('attStaffName');
+  const salaryInput = document.getElementById('attStaffSalary');
 
-    const name = nameInput.value.trim();
-    const salary = parseInt(salaryInput.value, 10);
+  const name = nameInput.value.trim();
+  const salary = parseInt(salaryInput.value, 10);
 
-    if (!name || isNaN(salary) || salary <= 0) {
-        alert('Please enter a valid worker name and daily salary.');
-        return;
-    }
+  if (!name || isNaN(salary) || salary <= 0) {
+    alert('Please enter a valid worker name and daily salary.');
+    return;
+  }
 
-    const staff = getStaff();
-    if (staff.some(s => s.name.toLowerCase() === name.toLowerCase())) {
-        alert('Worker already exists.');
-        return;
-    }
+  const staff = getStaff();
+  if (staff.some(s => s.name.toLowerCase() === name.toLowerCase())) {
+    alert('Worker already exists.');
+    return;
+  }
 
-    staff.push({ id: Date.now().toString(), name, salary });
-    localStorage.setItem(ATT_STAFF_KEY, JSON.stringify(staff));
+  staff.push({ id: Date.now().toString(), name, salary });
+  localStorage.setItem(ATT_STAFF_KEY, JSON.stringify(staff));
 
-    nameInput.value = '';
-    salaryInput.value = '';
+  nameInput.value = '';
+  salaryInput.value = '';
 
-    const currentDate = document.getElementById('attDateSelector').value;
-    renderAttendanceTable(currentDate);
+  const currentDate = document.getElementById('attDateSelector').value;
+  renderAttendanceTable(currentDate);
 }
 
 function deleteStaff(id) {
-    if (!confirm('Remove this worker? Their past data will remain in reports but they will be removed from future attendance lists.')) return;
+  if (!confirm('Remove this worker? Their past data will remain in reports but they will be removed from future attendance lists.')) return;
 
-    let staff = getStaff();
-    staff = staff.filter(s => s.id !== id);
-    localStorage.setItem(ATT_STAFF_KEY, JSON.stringify(staff));
+  let staff = getStaff();
+  staff = staff.filter(s => s.id !== id);
+  localStorage.setItem(ATT_STAFF_KEY, JSON.stringify(staff));
 
-    const currentDate = document.getElementById('attDateSelector').value;
-    renderAttendanceTable(currentDate);
+  const currentDate = document.getElementById('attDateSelector').value;
+  renderAttendanceTable(currentDate);
 }
 
 function renderAttendanceTable(dateStr) {
-    const tbody = document.getElementById('attTableBody');
-    if (!tbody) return;
+  const tbody = document.getElementById('attTableBody');
+  if (!tbody) return;
 
-    const staff = getStaff();
-    let allData = getAttData();
+  const staff = getStaff();
+  let allData = getAttData();
 
-    if (!allData[dateStr]) {
-        allData[dateStr] = {};
-    }
-    const dayData = allData[dateStr];
+  if (!allData[dateStr]) {
+    allData[dateStr] = {};
+  }
+  const dayData = allData[dateStr];
 
-    tbody.innerHTML = '';
+  tbody.innerHTML = '';
 
-    if (staff.length === 0) {
-        const tr = document.createElement('tr');
-        tr.innerHTML = '<td colspan="6" style="text-align: center; color: #6b7280; padding: 20px;">No workers added yet.</td>';
-        tbody.appendChild(tr);
-        return;
-    }
+  if (staff.length === 0) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td colspan="6" style="text-align: center; color: #6b7280; padding: 20px;">No workers added yet.</td>';
+    tbody.appendChild(tr);
+    return;
+  }
 
-    staff.forEach(worker => {
-        const wData = dayData[worker.id] || { morning: false, evening: false, advance: 0 };
+  staff.forEach(worker => {
+    const wData = dayData[worker.id] || { morning: false, evening: false, advance: 0 };
 
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
       <td style="font-weight: 500;">${worker.name}</td>
       <td>₹${worker.salary}</td>
       <td><input type="checkbox" class="att-mrng-chk" data-wid="${worker.id}" ${wData.morning ? 'checked' : ''}></td>
@@ -2064,103 +2064,103 @@ function renderAttendanceTable(dateStr) {
         </button>
       </td>
     `;
-        tbody.appendChild(tr);
-    });
+    tbody.appendChild(tr);
+  });
 
-    // Attach auto-save listeners
-    tbody.querySelectorAll('.att-mrng-chk, .att-evng-chk, .att-adv-inp').forEach(el => {
-        el.addEventListener('change', () => autoSaveAttendance(dateStr));
-    });
+  // Attach auto-save listeners
+  tbody.querySelectorAll('.att-mrng-chk, .att-evng-chk, .att-adv-inp').forEach(el => {
+    el.addEventListener('change', () => autoSaveAttendance(dateStr));
+  });
 
-    tbody.querySelectorAll('.att-delete-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const wid = e.currentTarget.getAttribute('data-wid');
-            deleteStaff(wid);
-        });
+  tbody.querySelectorAll('.att-delete-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const wid = e.currentTarget.getAttribute('data-wid');
+      deleteStaff(wid);
     });
+  });
 }
 
 function autoSaveAttendance(dateStr) {
-    const staff = getStaff();
-    const allData = getAttData();
+  const staff = getStaff();
+  const allData = getAttData();
 
-    if (!allData[dateStr]) {
-        allData[dateStr] = {};
+  if (!allData[dateStr]) {
+    allData[dateStr] = {};
+  }
+
+  staff.forEach(worker => {
+    const mrngEl = document.querySelector(`.att-mrng-chk[data-wid="${worker.id}"]`);
+    const evngEl = document.querySelector(`.att-evng-chk[data-wid="${worker.id}"]`);
+    const advEl = document.querySelector(`.att-adv-inp[data-wid="${worker.id}"]`);
+
+    if (mrngEl && evngEl && advEl) {
+      const advVal = parseInt(advEl.value, 10);
+      allData[dateStr][worker.id] = {
+        morning: mrngEl.checked,
+        evening: evngEl.checked,
+        advance: isNaN(advVal) ? 0 : advVal
+      };
     }
+  });
 
-    staff.forEach(worker => {
-        const mrngEl = document.querySelector(`.att-mrng-chk[data-wid="${worker.id}"]`);
-        const evngEl = document.querySelector(`.att-evng-chk[data-wid="${worker.id}"]`);
-        const advEl = document.querySelector(`.att-adv-inp[data-wid="${worker.id}"]`);
-
-        if (mrngEl && evngEl && advEl) {
-            const advVal = parseInt(advEl.value, 10);
-            allData[dateStr][worker.id] = {
-                morning: mrngEl.checked,
-                evening: evngEl.checked,
-                advance: isNaN(advVal) ? 0 : advVal
-            };
-        }
-    });
-
-    saveAttData(allData);
+  saveAttData(allData);
 }
 
 function showReport() {
-    const staff = getStaff();
-    const allData = getAttData();
-    const reportBody = document.getElementById('attReportBody');
+  const staff = getStaff();
+  const allData = getAttData();
+  const reportBody = document.getElementById('attReportBody');
 
-    let html = '';
+  let html = '';
 
-    staff.forEach(worker => {
-        let totalFull = 0;
-        let totalHalf = 0;
-        let totalAdvance = 0;
-        let totalEarned = 0;
+  staff.forEach(worker => {
+    let totalFull = 0;
+    let totalHalf = 0;
+    let totalAdvance = 0;
+    let totalEarned = 0;
 
-        let advancedDaysHTML = '';
+    let advancedDaysHTML = '';
 
-        Object.keys(allData).sort().forEach(dateStr => {
-            const dayDataForWorker = allData[dateStr][worker.id];
-            if (!dayDataForWorker) return;
+    Object.keys(allData).sort().forEach(dateStr => {
+      const dayDataForWorker = allData[dateStr][worker.id];
+      if (!dayDataForWorker) return;
 
-            const isMorning = dayDataForWorker.morning;
-            const isEvening = dayDataForWorker.evening;
-            const advance = dayDataForWorker.advance || 0;
+      const isMorning = dayDataForWorker.morning;
+      const isEvening = dayDataForWorker.evening;
+      const advance = dayDataForWorker.advance || 0;
 
-            let workType = 'Absent';
-            let earnedToday = 0;
+      let workType = 'Absent';
+      let earnedToday = 0;
 
-            if (isMorning && isEvening) {
-                workType = 'Full Day';
-                totalFull++;
-                earnedToday = worker.salary;
-            } else if (isMorning || isEvening) {
-                workType = 'Half Day';
-                totalHalf++;
-                earnedToday = worker.salary / 2;
-            }
+      if (isMorning && isEvening) {
+        workType = 'Full Day';
+        totalFull++;
+        earnedToday = worker.salary;
+      } else if (isMorning || isEvening) {
+        workType = 'Half Day';
+        totalHalf++;
+        earnedToday = worker.salary / 2;
+      }
 
-            totalAdvance += advance;
-            totalEarned += earnedToday;
+      totalAdvance += advance;
+      totalEarned += earnedToday;
 
-            if (advance > 0 && workType !== 'Absent') {
-                const displayDate = new Date(dateStr).toLocaleDateString('en-GB');
-                advancedDaysHTML += `
+      if (advance > 0 && workType !== 'Absent') {
+        const displayDate = new Date(dateStr).toLocaleDateString('en-GB');
+        advancedDaysHTML += `
           <tr style="border-bottom: 1px solid #f3f4f6;">
             <td style="padding: 8px 0; font-size: 0.9rem;">${displayDate}</td>
             <td style="padding: 8px 0; font-size: 0.9rem;">${workType}</td>
             <td style="padding: 8px 0; font-size: 0.9rem; font-weight: 500; color: #ef4444;">₹${advance}</td>
           </tr>
         `;
-            }
-        });
+      }
+    });
 
-        const balance = totalEarned - totalAdvance;
-        const balanceColor = balance >= 0 ? '#10b981' : '#ef4444';
+    const balance = totalEarned - totalAdvance;
+    const balanceColor = balance >= 0 ? '#10b981' : '#ef4444';
 
-        html += `
+    html += `
       <div class="worker-report-card">
         <div class="worker-report-name">${worker.name}</div>
         <div class="worker-report-stats">
@@ -2180,19 +2180,12 @@ function showReport() {
         ` : `<div style="font-size: 0.85rem; color: #6b7280; font-style: italic;">No advances on working days.</div>`}
       </div>
     `;
-    });
+  });
 
-    if (html === '') {
-        html = '<p>No staff to generate report for.</p>';
-    }
+  if (html === '') {
+    html = '<p>No staff to generate report for.</p>';
+  }
 
-    reportBody.innerHTML = html;
-    document.getElementById('attReportModal').classList.add('active');
+  reportBody.innerHTML = html;
+  document.getElementById('attReportModal').classList.add('active');
 }
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-fetch("https://your-app.onrender.com/api/endpoint")
-  .then(res => res.json())
-  .then(data => console.log(data));
