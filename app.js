@@ -2193,3 +2193,6 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+fetch("https://your-app.onrender.com/api/endpoint")
+  .then(res => res.json())
+  .then(data => console.log(data));
