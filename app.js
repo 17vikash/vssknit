@@ -2192,3 +2192,11 @@ function showReport() {
 fetch('https://vss-dc.onrender.com')
   .then(res => res.json())
   .then(data => console.log(data));
+  app.get("/", (req, res) => {
+  res.send("Backend is running ✅");
+});
+const path = require("path");
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
