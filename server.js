@@ -13,8 +13,6 @@ app.use(cors());
 
 // Connect to local MongoDB
 mongoose.connect('mongodb://127.0.0.1:27017/vss_dc', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
     serverSelectionTimeoutMS: 5000,
     family: 4
 })
