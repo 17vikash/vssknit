@@ -2189,6 +2189,6 @@ function showReport() {
   reportBody.innerHTML = html;
   document.getElementById('attReportModal').classList.add('active');
 }
-fetch(https://vss-dc.onrender.com/)
+fetch(https://vss-dc.onrender.com)
   .then(res => res.json())
   .then(data => console.log(data));
