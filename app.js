@@ -362,10 +362,21 @@ function populatePrintFromEntry(e) {
   set('printReceivedWt', e.ourWt || '0');
   set('printDyDcWt', e.totalDyDcWt || '0');
   const printBody = document.getElementById('printGridBody');
-  if (printBody && e.items) {
-    printBody.innerHTML = e.items.map(it => `
-      <tr><td>${e.lotNo || '--'}</td><td>${it.fabric || ''}</td><td>${it.colour || ''}</td><td>${it.dia || ''}</td><td>${it.roll || ''}</td><td>${it.receivedWt || ''}</td></tr>
-    `).join('');
+  const lotNo = e.lotNo || '--';
+  if (printBody) {
+    let rowsHtml = '';
+    const items = e.items || [];
+    const maxRows = 6;
+    
+    for (let i = 0; i < maxRows; i++) {
+        if (i < items.length) {
+            const it = items[i];
+            rowsHtml += `<tr><td>${lotNo}</td><td>${it.fabric || ''}</td><td>${it.colour || ''}</td><td>${it.dia || ''}</td><td>${it.roll || ''}</td><td>${it.receivedWt || ''}</td></tr>`;
+        } else {
+            rowsHtml += `<tr class="empty-row"><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>`;
+        }
+    }
+    printBody.innerHTML = rowsHtml;
   }
 }
 
@@ -561,7 +572,19 @@ function printReceivedChallan() {
   const printBody = document.getElementById('printGridBody');
   const lotNo = document.getElementById('lotNo')?.value || '--';
   if (printBody) {
-    printBody.innerHTML = rows.length ? rows.map(r => `<tr><td>${lotNo}</td><td>${r.fabric || ''}</td><td>${r.colour || ''}</td><td>${r.dia || ''}</td><td>${r.roll || ''}</td><td>${r.receivedWt || ''}</td></tr>`).join('') : '<tr><td colspan="6">No items</td></tr>';
+    let rowsHtml = '';
+    const items = rows || [];
+    const maxRows = 6;
+    
+    for (let i = 0; i < maxRows; i++) {
+        if (i < items.length) {
+            const r = items[i];
+            rowsHtml += `<tr><td>${lotNo}</td><td>${r.fabric || ''}</td><td>${r.colour || ''}</td><td>${r.dia || ''}</td><td>${r.roll || ''}</td><td>${r.receivedWt || ''}</td></tr>`;
+        } else {
+            rowsHtml += `<tr class="empty-row"><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>`;
+        }
+    }
+    printBody.innerHTML = rowsHtml;
   }
   window.print();
 }
@@ -2192,7 +2215,7 @@ function showReport() {
 fetch('https://vss-dc.onrender.com')
   .then(res => res.json())
   .then(data => console.log(data));
-  app.get("/", (req, res) => {
+app.get("/", (req, res) => {
   res.send("Backend is running ✅");
 });
 const path = require("path");

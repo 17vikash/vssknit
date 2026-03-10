@@ -1029,7 +1029,7 @@ body {
 
   @page {
     size: A4 portrait;
-    margin: 10mm;
+    margin: 0;
   }
 
   .sidebar,
@@ -1048,19 +1048,22 @@ body {
     color: #000;
   }
 
-  .print-half-a4-delivery {
+  /* Received Challan A4 Print Layout (Optimized for Scale 160, Margin None) */
+  .print-a4-receipt {
     width: 100%;
+    /* Max width ensures it doesn't grow absurdly on unexpected wider displays, but generally adapts to paper width */
     max-width: 210mm;
-    min-height: 148mm;
-    max-height: 148mm;
-    overflow: hidden;
     margin: 0 auto;
-    padding: 6mm;
-    /* Reduced padding to save space */
+    padding: 6mm 8mm; /* Reduced padding to help prevent overflow at scale 160 */
     box-sizing: border-box;
-    font-size: 12px;
+    font-size: 13px;
     background: white;
     position: relative;
+  }
+
+  .print-a4-receipt .print-item-table th,
+  .print-a4-receipt .print-item-table td {
+    padding: 4px 8px; /* Tighter padding to fit exactly into 160 scale A4 viewport (131.25mm) */
   }
 
   .print-bordered-section {
@@ -1152,12 +1155,22 @@ body {
     margin-bottom: 4px;
     font-size: 12px;
     page-break-inside: auto;
-    /* Allow breaks */
+    /* Fixed Layout as requested */
+    table-layout: fixed;
   }
+
+  /* Specific column widths for the 6 columns layout: Lot No, Fabric, Colour, Dia, Roll, Weight */
+  .print-a4-receipt .print-item-table th:nth-child(1), .print-a4-receipt .print-item-table td:nth-child(1) { width: 14%; } /* Lot No */
+  .print-a4-receipt .print-item-table th:nth-child(2), .print-a4-receipt .print-item-table td:nth-child(2) { width: 42%; } /* Fabric */
+  .print-a4-receipt .print-item-table th:nth-child(3), .print-a4-receipt .print-item-table td:nth-child(3) { width: 14%; } /* Colour */
+  .print-a4-receipt .print-item-table th:nth-child(4), .print-a4-receipt .print-item-table td:nth-child(4) { width: 10%; }  /* Dia */
+  .print-a4-receipt .print-item-table th:nth-child(5), .print-a4-receipt .print-item-table td:nth-child(5) { width: 8%; }   /* Roll */
+  .print-a4-receipt .print-item-table th:nth-child(6), .print-a4-receipt .print-item-table td:nth-child(6) { width: 12%; } /* Weight */
 
   .print-item-table tr {
     page-break-inside: avoid;
     page-break-after: auto;
+    height: 24px; /* Fixed row height to maintain layout */
   }
 
   .print-item-table thead {
@@ -1183,7 +1196,27 @@ body {
   .print-item-table th,
   .print-item-table td {
     border: 1px solid #000;
-    padding: 4px 16px;
+    padding: 2px 8px; /* Tighter vertical padding for fixed height */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; /* Prevent auto-wrapping */
+  }
+
+  /* Remove all inner borders for empty rows to keep the area blank but preserve the outer box edge */
+  .print-item-table tr.empty-row td {
+    border: none;          /* clear cell borders */
+    border-left: none;     /* explicit reset */
+    border-right: none;    /* explicit reset */
+    border-top: none;      /* explicit reset */
+    border-bottom: none;   /* explicit reset */
+  }
+  
+  /* Keep the outer left/right border of the table intact for empty rows */
+  .print-item-table tr.empty-row td:first-child {
+    border-left: 1px solid #000;
+  }
+  .print-item-table tr.empty-row td:last-child {
+    border-right: 1px solid #000;
   }
 
   .print-item-table th {
