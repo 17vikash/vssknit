@@ -1084,7 +1084,7 @@ body {
   .print-company-address {
     font-size: 11px;
     line-height: 1.2;
-    margin-bottom: 2px;
+    margin-bottom: -4px;
   }
 
   .print-doc-title {
@@ -1256,80 +1256,190 @@ body {
     font-weight: normal;
   }
 
-  /* Tax Invoice Print Layout (A4 styled) */
-  .print-invoice-layout {
-    font-family: Arial, "Times New Roman", sans-serif;
-    color: #000;
-  }
-
-  .print-a4-invoice {
-    width: 100%;
-    /* Scales to paper size */
-    max-width: 210mm;
-    /* A4 Width max */
+  /* Redesigned Invoice Print Layout */
+  .invoice-print-container {
+    width: 210mm;
+    min-height: 297mm;
     margin: 0 auto;
-    padding: 10mm;
-    box-sizing: border-box;
-    font-size: 11px;
-    background: white;
-  }
-
-  .print-inv-top-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-    font-size: 11px;
-  }
-
-  .print-inv-top-left,
-  .print-inv-top-right {
-    line-height: 1.5;
-  }
-
-  .print-inv-bill-to {
-    margin-bottom: 6px;
-    font-size: 11px;
-  }
-
-  .print-hr {
-    border: none;
-    border-top: 1px solid #000;
-    margin: 8px 0 12px 0;
-  }
-
-  .print-inv-table th,
-  .print-inv-table td {
-    padding: 6px 8px;
+    background: #fff;
+    color: #000;
+    font-family: Arial, sans-serif;
+    font-size: 10px;
     border: 1px solid #000;
+    position: relative;
+    box-sizing: border-box;
+    display: none; /* Hidden by default, shown in preparePrint */
   }
 
-  .print-inv-table tbody td {
-    text-align: right;
-    /* Default align right for numeric columns */
+  body.printing .invoice-print-container {
+    display: block;
   }
 
-  .print-inv-table tbody td:nth-child(1),
-  .print-inv-table tbody td:nth-child(2),
-  .print-inv-table tbody td:nth-child(3) {
-    text-align: left;
-    /* S.No, Description, Colour align left */
+  .invoice-print-container * {
+    box-sizing: border-box;
   }
 
-  .print-inv-summary {
-    text-align: left;
-    margin-top: 15px;
-    font-size: 11px;
-    line-height: 1.6;
+  .print-row {
+    display: flex;
+    width: 100%;
   }
 
-  .print-inv-grand-total {
+  .col-12 { width: 100%; }
+  .col-7 { width: 58.33%; }
+  .col-6 { width: 50%; }
+  .col-5 { width: 41.66%; }
+  .col-4 { width: 33.33%; }
+
+  .border-bottom { border-bottom: 1px solid #000; }
+  .border-right { border-right: 1px solid #000; }
+  .border-top { border-top: 1px solid #000; }
+  .no-padding { padding: 0 !important; }
+
+  .invoice-label {
+    font-size: 16px;
     font-weight: bold;
-    font-size: 12px;
-    border-top: 2px solid #000;
-    display: inline-block;
-    padding-top: 4px;
-    margin-top: 4px;
+    letter-spacing: 5px;
+    margin-right: 10px;
   }
+
+  .text-secondary-small {
+    font-size: 8px;
+    color: #333;
+  }
+
+  .company-name {
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .compacting-div {
+    font-size: 9px;
+    font-style: italic;
+    margin-bottom: 4px;
+  }
+
+  .company-address {
+    font-size: 9px;
+    line-height: 1.3;
+  }
+
+  .regulatory-info {
+    font-size: 9px;
+    line-height: 1.4;
+  }
+
+  .bill-to-label {
+    font-size: 8px;
+    font-style: italic;
+    margin-bottom: 5px;
+  }
+
+  .party-name {
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 3px;
+  }
+
+  .party-address {
+    font-size: 9px;
+    line-height: 1.3;
+    max-width: 90%;
+  }
+
+  .meta-item {
+    font-size: 12px;
+    margin-bottom: 5px;
+  }
+
+  .invoice-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  .invoice-items-table th,
+  .invoice-items-table td {
+    border: 1px solid #000;
+    border-top: none;
+    padding: 4px 6px;
+    font-size: 9px;
+    text-align: center;
+    vertical-align: middle;
+    height: 35px; /* Fixed height for 9 rows */
+    overflow: hidden;
+  }
+
+  .invoice-items-table th {
+    background: #fff;
+    font-weight: bold;
+    font-size: 8px;
+    height: 30px;
+  }
+
+  .invoice-items-table th:nth-child(1) { width: 35px; } /* SL */
+  .invoice-items-table th:nth-child(2) { width: 60px; } /* PARTY DCNO */
+  .invoice-items-table th:nth-child(3) { width: 60px; } /* ORDER */
+  .invoice-items-table th:nth-child(4) { width: 60px; } /* JOB NO */
+  .invoice-items-table th:nth-child(5) { width: 90px; } /* DCNO & DATE */
+  .invoice-items-table th:nth-child(6) { width: auto; } /* DESCRIPTION */
+  .invoice-items-table th:nth-child(7) { width: 100px; } /* COLOUR */
+  .invoice-items-table th:nth-child(8) { width: 70px; } /* WEIGHT */
+  .invoice-items-table th:nth-child(9) { width: 50px; } /* RATE */
+  .invoice-items-table th:nth-child(10) { width: 80px; } /* AMOUNT */
+
+  .invoice-items-table tfoot td {
+      border: 1px solid #000;
+      height: 25px;
+  }
+
+  .border-none { border: none !important; }
+
+  .bank-details-grid {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    font-size: 9px;
+    row-gap: 2px;
+  }
+
+  .words-text {
+    font-style: italic;
+    font-size: 9px;
+    padding-left: 5px;
+    line-height: 1.2;
+  }
+
+  .totals-grid {
+    display: grid;
+    grid-template-columns: 1fr 100px;
+    font-size: 10px;
+    width: 100%;
+  }
+
+  .footer-border-top {
+      border-top: 1px solid #000;
+  }
+
+  .signature-row {
+      margin-top: 30px;
+      padding-bottom: 10px;
+      font-size: 10px;
+  }
+
+  .placeholder-sig {
+      height: 35px;
+  }
+
+  .font-bold { font-weight: bold; }
+  .text-right { text-align: right; }
+  .text-center { text-align: center; }
+  .p-1 { padding: 4px; }
+  .p-2 { padding: 8px; }
+  .px-2 { padding-left: 8px; padding-right: 8px; }
+  .px-3 { padding-left: 12px; padding-right: 12px; }
+  .py-1 { padding-top: 4px; padding-bottom: 4px; }
+  .py-2 { padding-top: 8px; padding-bottom: 8px; }
+  .mt-1 { margin-top: 4px; }
+  .mt-2 { margin-top: 8px; }
 }
 
 /* Placeholder Pages */
@@ -1609,4 +1719,90 @@ body {
 .custom-option.selected {
   color: #ffffff;
   background-color: var(--accent-blue);
+}
+
+/* Password Modal */
+.password-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+}
+
+.password-modal.active {
+  display: flex;
+}
+
+.password-box {
+  background: var(--card-bg);
+  padding: 32px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.password-box h2 {
+  margin: 0 0 8px 0;
+  font-size: 1.5rem;
+  color: var(--text-primary);
+}
+
+.password-box p {
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+}
+
+.password-field {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+  outline: none;
+  transition: border-color 0.2s;
+  text-align: center;
+  letter-spacing: 4px;
+}
+
+.password-field:focus {
+  border-color: var(--accent-blue);
+}
+
+.password-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-auth {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.2s;
+  border: none;
+}
+
+.btn-auth-cancel {
+  background: #f3f4f6;
+  color: var(--text-secondary);
+}
+
+.btn-auth-confirm {
+  background: var(--sidebar-bg);
+  color: white;
+}
+
+.btn-auth:hover {
+  filter: brightness(0.9);
 }

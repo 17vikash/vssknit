@@ -1015,17 +1015,45 @@ function printDeliveryChallan() {
   const receivedEntries = getEntries();
   const matchedEntry = receivedEntries.find(e => String(e.inwNo) === String(firstItem.inwNo));
   if (matchedEntry) {
-    document.getElementById('printDelRecdDcNo').textContent = matchedEntry.dyeingDcNo || '--';
+    document.getElementById('printDelDyDcWt').textContent = parseFloat(matchedEntry.totalDyDcWt || 0).toFixed(3);
     document.getElementById('printDelRecdDcNo2').textContent = matchedEntry.dyeingDcNo || '--';
     document.getElementById('printDelPartyDcNo').textContent = matchedEntry.partyDcNo || '--';
-    document.getElementById('printDelDyeingName').textContent = matchedEntry.dyeing || '--';
+    
+    // Consistent Dyeing Name
+    const dInfo = getDyeingInfoByName(matchedEntry.dyeing);
+    document.getElementById('printDelDyeingName').textContent = dInfo ? dInfo.name : (matchedEntry.dyeing || '--');
+    
     document.getElementById('printDelReceivedWt').textContent = parseFloat(matchedEntry.ourWt || 0).toFixed(3);
+    
+    // Set Delivery Party Meta
+    const partyName = document.getElementById('printDelPartyName').textContent;
+    const pInfo = getPartyInfoByName(partyName);
+    const delPAddress = document.getElementById('printDelPartyAddress');
+    const delPGstLine = document.getElementById('printDelPartyGstinLine');
+    const delPGst = document.getElementById('printDelPartyGst');
+
+    if (pInfo) {
+      if (delPAddress) delPAddress.textContent = shortenAddress(pInfo.address);
+      if (delPGst && delPGstLine) {
+        if (pInfo.gstin) {
+          delPGst.textContent = pInfo.gstin;
+          delPGstLine.style.display = 'inline';
+        } else {
+          delPGstLine.style.display = 'none';
+        }
+      }
+    } else {
+      if (delPAddress) delPAddress.textContent = '';
+      if (delPGstLine) delPGstLine.style.display = 'none';
+    }
   } else {
-    document.getElementById('printDelRecdDcNo').textContent = '--';
+    document.getElementById('printDelDyDcWt').textContent = '0.000';
     document.getElementById('printDelRecdDcNo2').textContent = '--';
     document.getElementById('printDelPartyDcNo').textContent = '--';
     document.getElementById('printDelDyeingName').textContent = '--';
     document.getElementById('printDelReceivedWt').textContent = '0.000';
+    if (document.getElementById('printDelPartyAddress')) document.getElementById('printDelPartyAddress').textContent = '';
+    if (document.getElementById('printDelPartyGstinLine')) document.getElementById('printDelPartyGstinLine').style.display = 'none';
   }
 
   const printBody = document.getElementById('printDelGridBody');
@@ -1071,17 +1099,45 @@ function printDeliveryById(id) {
   const receivedEntries = getEntries();
   const matchedEntry = receivedEntries.find(e => String(e.inwNo) === String(firstItem.inwNo));
   if (matchedEntry) {
-    document.getElementById('printDelRecdDcNo').textContent = matchedEntry.dyeingDcNo || '--';
+    document.getElementById('printDelDyDcWt').textContent = parseFloat(matchedEntry.totalDyDcWt || 0).toFixed(3);
     document.getElementById('printDelRecdDcNo2').textContent = matchedEntry.dyeingDcNo || '--';
     document.getElementById('printDelPartyDcNo').textContent = matchedEntry.partyDcNo || '--';
-    document.getElementById('printDelDyeingName').textContent = matchedEntry.dyeing || '--';
+    
+    // Consistent Dyeing Name
+    const dInfo = getDyeingInfoByName(matchedEntry.dyeing);
+    document.getElementById('printDelDyeingName').textContent = dInfo ? dInfo.name : (matchedEntry.dyeing || '--');
+    
     document.getElementById('printDelReceivedWt').textContent = parseFloat(matchedEntry.ourWt || 0).toFixed(3);
+    
+    // Set Delivery Party Meta
+    const partyName = searchDelivery.partyName || '--';
+    const pInfo = getPartyInfoByName(partyName);
+    const delPAddress = document.getElementById('printDelPartyAddress');
+    const delPGstLine = document.getElementById('printDelPartyGstinLine');
+    const delPGst = document.getElementById('printDelPartyGst');
+
+    if (pInfo) {
+      if (delPAddress) delPAddress.textContent = shortenAddress(pInfo.address);
+      if (delPGst && delPGstLine) {
+        if (pInfo.gstin) {
+          delPGst.textContent = pInfo.gstin;
+          delPGstLine.style.display = 'inline';
+        } else {
+          delPGstLine.style.display = 'none';
+        }
+      }
+    } else {
+      if (delPAddress) delPAddress.textContent = '';
+      if (delPGstLine) delPGstLine.style.display = 'none';
+    }
   } else {
-    document.getElementById('printDelRecdDcNo').textContent = '--';
+    document.getElementById('printDelDyDcWt').textContent = '0.000';
     document.getElementById('printDelRecdDcNo2').textContent = '--';
     document.getElementById('printDelPartyDcNo').textContent = '--';
     document.getElementById('printDelDyeingName').textContent = '--';
     document.getElementById('printDelReceivedWt').textContent = '0.000';
+    if (document.getElementById('printDelPartyAddress')) document.getElementById('printDelPartyAddress').textContent = '';
+    if (document.getElementById('printDelPartyGstinLine')) document.getElementById('printDelPartyGstinLine').style.display = 'none';
   }
 
   const printBody = document.getElementById('printDelGridBody');
@@ -1128,6 +1184,8 @@ function initInvoice() {
   const btnPrint = document.getElementById('btnInvPrint');
   const btnAddRow = document.getElementById('btnInvAddRow');
   const gstPercent = document.getElementById('invGstPercent');
+  const invInwNo = document.getElementById('invInwNo');
+  const partySel = document.getElementById('invPartyName');
 
   if (btnNew) btnNew.addEventListener('click', () => showInvoiceForm(true));
   if (btnBack) btnBack.addEventListener('click', showInvoiceList);
@@ -1137,7 +1195,104 @@ function initInvoice() {
   if (btnAddRow) btnAddRow.addEventListener('click', addInvoiceRow);
   if (gstPercent) gstPercent.addEventListener('input', updateInvoiceTotals);
 
+  if (invInwNo) {
+    invInwNo.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const inwNoVal = invInwNo.value.trim();
+        if (inwNoVal) {
+          lookupAndAddDcToInvoice(inwNoVal);
+        }
+      }
+    });
+  }
+
+  if (partySel) {
+    partySel.addEventListener('change', updateInvInwList);
+  }
+
   renderInvoiceTable();
+}
+
+function updateInvInwList() {
+  const partySel = document.getElementById('invPartyName');
+  const partyValue = partySel?.value;
+  const partyName = document.getElementById('search_invPartyName')?.value;
+  const datalist = document.getElementById('invInwList');
+  if (!datalist) return;
+
+  datalist.innerHTML = '';
+  if (!partyValue && !partyName) return;
+
+  const entries = getEntries();
+  const partyEntries = entries.filter(e => 
+    (partyValue && e.partyValue === partyValue) || 
+    (partyName && e.party === partyName)
+  );
+
+  const inwardNos = [...new Set(partyEntries.map(e => e.inwNo).filter(inw => inw))];
+  
+  inwardNos.forEach(inw => {
+    const opt = document.createElement('option');
+    opt.value = inw;
+    datalist.appendChild(opt);
+  });
+}
+
+function lookupAndAddDcToInvoice(inwNo) {
+  const tbody = document.getElementById('invItemGridBody');
+  if (tbody && tbody.querySelectorAll('tr').length >= 9) {
+    alert('Maximum 9 rows allowed per invoice.');
+    return;
+  }
+
+  const deliveries = getDeliveries();
+  const dc = deliveries.find(d => 
+    (d.items && d.items.some(it => String(it.inwNo) === String(inwNo))) || 
+    String(d.dcNo) === String(inwNo)
+  );
+  
+  if (!dc) {
+    alert('No Delivery Challan found matching: ' + inwNo);
+    return;
+  }
+
+  const item = (dc.items && dc.items.find(it => String(it.inwNo) === String(inwNo))) || (dc.items && dc.items[0]) || {};
+  
+  const entries = getEntries();
+  const matchedEntry = entries.find(e => String(e.inwNo) === String(item.inwNo));
+
+  const fields = {
+    invItemDesc: (item.fabric || '') + (item.process ? ' - ' + item.process : ''),
+    invItemColour: item.colour || '',
+    invItemDia: item.dia || '',
+    invItemQty: item.delWt || item.weight || dc.totalDelWt || '0',
+    invItemPartyDcNo: matchedEntry?.partyDcNo || '',
+    invItemPartyOrder: matchedEntry?.partyOrder || '',
+    invItemJobNo: item.inwNo || '',
+    invItemDcDate: dc.date ? `${dc.dcNo} ${new Date(dc.date).toLocaleDateString('en-GB')}` : dc.dcNo || ''
+  };
+
+  Object.entries(fields).forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    if (el) el.value = val;
+  });
+
+  const invDcNo = document.getElementById('invDcNo');
+  if (invDcNo && !invDcNo.value) invDcNo.value = dc.dcNo;
+
+  const invInwNoField = document.getElementById('invInwNo');
+  if (invInwNoField) {
+    invInwNoField.style.backgroundColor = '#dcfce7';
+    setTimeout(() => { 
+       invInwNoField.style.backgroundColor = ''; 
+       invInwNoField.value = ''; 
+       const rateEl = document.getElementById('invItemRate');
+      if (rateEl) {
+        rateEl.focus();
+        rateEl.select();
+      }
+    }, 500);
+  }
 }
 
 function showInvoiceList() {
@@ -1273,9 +1428,26 @@ function addInvoiceRow() {
 
   if (!desc && !qty && !rate) return;
 
+  if (tbody.querySelectorAll('tr').length >= 9) {
+    alert('Maximum 9 rows allowed per invoice.');
+    return;
+  }
+
   const sno = tbody.querySelectorAll('tr').length + 1;
   const amount = (parseFloat(qty) * parseFloat(rate)).toFixed(2);
+  
+  // Metadata for advanced print layout
+  const partyDcNo = document.getElementById('invItemPartyDcNo')?.value || '';
+  const partyOrder = document.getElementById('invItemPartyOrder')?.value || '';
+  const jobNo = document.getElementById('invItemJobNo')?.value || '';
+  const dcDate = document.getElementById('invItemDcDate')?.value || '';
+
   const tr = document.createElement('tr');
+  tr.dataset.partyDcNo = partyDcNo;
+  tr.dataset.partyOrder = partyOrder;
+  tr.dataset.jobNo = jobNo;
+  tr.dataset.dcDate = dcDate;
+  
   tr.innerHTML = `<td>${sno}</td><td>${desc}</td><td>${colour}</td><td>${dia}</td><td>${qty}</td><td>${rate}</td><td>${amount}</td><td><button type="button" class="btn-delete-row" title="Delete">×</button></td>`;
   tr.querySelector('.btn-delete-row').addEventListener('click', () => { tr.remove(); renumberInvoiceRows(); updateInvoiceTotals(); });
   tr.addEventListener('dblclick', () => {
@@ -1293,7 +1465,7 @@ function addInvoiceRow() {
 }
 
 function clearInvoiceInputs() {
-  ['invItemDesc', 'invItemColour', 'invItemDia', 'invItemQty', 'invItemRate'].forEach(id => {
+  ['invItemDesc', 'invItemColour', 'invItemDia', 'invItemQty', 'invItemRate', 'invItemPartyDcNo', 'invItemPartyOrder', 'invItemJobNo', 'invItemDcDate'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
@@ -1335,7 +1507,11 @@ function collectInvoiceData() {
         dia: c[3].textContent,
         qty: c[4].textContent,
         rate: c[5].textContent,
-        amount: c[6].textContent
+        amount: c[6].textContent,
+        partyDcNo: tr.dataset.partyDcNo || '',
+        partyOrder: tr.dataset.partyOrder || '',
+        jobNo: tr.dataset.jobNo || '',
+        dcDate: tr.dataset.dcDate || ''
       });
     }
   });
@@ -1378,31 +1554,70 @@ function printInvoice() {
   preparePrint('invoicePrint');
   const rows = collectInvoiceData();
   if (!rows.length) { alert('Add at least one item before printing.'); return; }
-
+  
   applyCompanySettingsToPrint('Inv');
 
   const partyInput = document.getElementById('search_invPartyName');
+  const pInfo = getPartyInfoByName(partyInput?.value);
+  
+  // Header Details
+  const dateVal = document.getElementById('invDate')?.value;
   document.getElementById('printInvPartyName').textContent = partyInput && partyInput.value ? partyInput.value : '--';
-  document.getElementById('printInvDate').textContent = document.getElementById('invDate')?.value ? new Date(document.getElementById('invDate').value).toLocaleDateString('en-GB') : '--';
+  document.getElementById('printInvPartyAddress').innerHTML = pInfo ? (pInfo.address || '--').replace(/\n/g, '<br>') : '--';
+  document.getElementById('printInvPartyGstin').textContent = pInfo && pInfo.gstin ? pInfo.gstin : '--';
+  document.getElementById('printInvPartyState').textContent = 'Tamil Nadu';
+  document.getElementById('printInvPartyStateCode').textContent = '33';
+  document.getElementById('printInvDate').textContent = dateVal ? new Date(dateVal).toLocaleDateString('en-GB') : '--';
   document.getElementById('printInvNo').textContent = document.getElementById('invNo')?.value || '--';
-  document.getElementById('printInvDcNo').textContent = document.getElementById('invDcNo')?.value || '--';
-  document.getElementById('printInvSubTotal').textContent = document.getElementById('invSubTotal')?.value || '0.00';
-  document.getElementById('printInvGstAmount').textContent = document.getElementById('invGstAmount')?.value || '0.00';
-  document.getElementById('printInvTotalAmount').textContent = document.getElementById('invTotalAmount')?.value || '0.00';
+
+  // Calculations
+  const subTotal = parseFloat(document.getElementById('invSubTotal')?.value || 0);
+  const gstPercent = parseFloat(document.getElementById('invGstPercent')?.value || 0);
+  const totalGst = subTotal * (gstPercent / 100);
+  const cgst = totalGst / 2;
+  const sgst = totalGst / 2;
+  const grandTotalRaw = subTotal + totalGst;
+  const grandTotal = Math.round(grandTotalRaw);
+  const roundOff = (grandTotal - grandTotalRaw).toFixed(2);
+
+  document.getElementById('printInvSubTotal').textContent = subTotal.toFixed(2);
+  document.getElementById('printInvCgst').textContent = cgst.toFixed(2);
+  document.getElementById('printInvSgst').textContent = sgst.toFixed(2);
+  document.getElementById('printInvIgst').textContent = '0.00';
+  document.getElementById('printInvTotalTax').textContent = totalGst.toFixed(2);
+  document.getElementById('printInvRoundOff').textContent = roundOff;
+  document.getElementById('printInvGrandTotal').textContent = grandTotal.toFixed(2);
+  
+  document.getElementById('printTaxWords').textContent = convertNumberToWords(totalGst.toFixed(2));
+  document.getElementById('printInvWords').textContent = convertNumberToWords(grandTotal.toFixed(2));
 
   const printBody = document.getElementById('printInvGridBody');
   if (printBody) {
-    printBody.innerHTML = rows.length ? rows.map((r, idx) => `
+    let totalWt = 0;
+    let html = rows.map((r, idx) => {
+        const wt = parseFloat(r.qty || 0);
+        totalWt += wt;
+        return `
       <tr>
         <td>${idx + 1}</td>
+        <td>${r.partyDcNo || '0'}</td>
+        <td>${r.partyOrder || '0'}</td>
+        <td>${r.jobNo || '--'}</td>
+        <td>${r.dcDate || '--'}</td>
         <td style="text-align: left;">${r.desc || ''}</td>
         <td>${r.colour || ''}</td>
-        <td>${r.dia || ''}</td>
-        <td>${r.qty || ''}</td>
-        <td>${r.rate || ''}</td>
-        <td>${r.amount || ''}</td>
+        <td>${wt.toFixed(3)}</td>
+        <td>${parseFloat(r.rate || 0).toFixed(2)}</td>
+        <td>${parseFloat(r.amount || 0).toFixed(2)}</td>
       </tr>
-    `).join('') : '<tr><td colspan="7" style="text-align:center;">No items</td></tr>';
+    `; }).join('');
+
+    // Pad to 9 rows
+    for (let k = rows.length; k < 9; k++) {
+      html += `<tr><td>${k + 1}</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>`;
+    }
+    printBody.innerHTML = html;
+    document.getElementById('printInvTotalWeight').textContent = totalWt.toFixed(3);
   }
   setTimeout(() => window.print(), 100);
 }
@@ -1414,34 +1629,94 @@ function printInvoiceById(id) {
   if (!i) return;
 
   applyCompanySettingsToPrint('Inv');
+  const pInfo = getPartyInfoByName(i.partyName);
 
   document.getElementById('printInvPartyName').textContent = i.partyName || '--';
+  document.getElementById('printInvPartyAddress').innerHTML = pInfo ? (pInfo.address || '--').replace(/\n/g, '<br>') : '--';
+  document.getElementById('printInvPartyGstin').textContent = pInfo && pInfo.gstin ? pInfo.gstin : '--';
+  document.getElementById('printInvPartyState').textContent = 'Tamil Nadu';
+  document.getElementById('printInvPartyStateCode').textContent = '33';
   document.getElementById('printInvDate').textContent = i.date ? new Date(i.date).toLocaleDateString('en-GB') : '--';
   document.getElementById('printInvNo').textContent = i.invNo || '--';
-  document.getElementById('printInvDcNo').textContent = i.dcNo || '--';
-  document.getElementById('printInvSubTotal').textContent = i.subTotal || '0.00';
-  document.getElementById('printInvGstAmount').textContent = i.gstAmount || '0.00';
-  document.getElementById('printInvTotalAmount').textContent = i.totalAmount || '0.00';
+
+  // Calculations
+  const subTotal = parseFloat(i.subTotal || 0);
+  const totalAmount = parseFloat(i.totalAmount || 0);
+  const totalGst = parseFloat(i.gstAmount || 0);
+  const cgst = totalGst / 2;
+  const sgst = totalGst / 2;
+  const grandTotal = Math.round(totalAmount);
+  const roundOff = (grandTotal - totalAmount).toFixed(2);
+
+  document.getElementById('printInvSubTotal').textContent = subTotal.toFixed(2);
+  document.getElementById('printInvCgst').textContent = cgst.toFixed(2);
+  document.getElementById('printInvSgst').textContent = sgst.toFixed(2);
+  document.getElementById('printInvIgst').textContent = '0.00';
+  document.getElementById('printInvTotalTax').textContent = totalGst.toFixed(2);
+  document.getElementById('printInvRoundOff').textContent = roundOff;
+  document.getElementById('printInvGrandTotal').textContent = grandTotal.toFixed(2);
+  
+  document.getElementById('printTaxWords').textContent = convertNumberToWords(totalGst.toFixed(2));
+  document.getElementById('printInvWords').textContent = convertNumberToWords(grandTotal.toFixed(2));
 
   const printBody = document.getElementById('printInvGridBody');
   if (printBody && i.items) {
-    printBody.innerHTML = i.items.map((it, idx) => `
+    let totalWt = 0;
+    let html = i.items.map((it, idx) => {
+        const wt = parseFloat(it.qty || 0);
+        totalWt += wt;
+        return `
       <tr>
         <td>${idx + 1}</td>
+        <td>${it.partyDcNo || '0'}</td>
+        <td>${it.partyOrder || '0'}</td>
+        <td>${it.jobNo || '--'}</td>
+        <td>${it.dcDate || '--'}</td>
         <td style="text-align: left;">${it.desc || ''}</td>
         <td>${it.colour || ''}</td>
-        <td>${it.dia || ''}</td>
-        <td>${it.qty || ''}</td>
-        <td>${it.rate || ''}</td>
-        <td>${it.amount || ''}</td>
+        <td>${wt.toFixed(3)}</td>
+        <td>${parseFloat(it.rate || 0).toFixed(2)}</td>
+        <td>${parseFloat(it.amount || 0).toFixed(2)}</td>
       </tr>
-    `).join('');
+    `; }).join('');
+
+    // Pad to 9 rows
+    for (let k = i.items.length; k < 9; k++) {
+      html += `<tr><td>${k + 1}</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>`;
+    }
+    printBody.innerHTML = html;
+    document.getElementById('printInvTotalWeight').textContent = totalWt.toFixed(3);
   }
   setTimeout(() => window.print(), 100);
 }
 
 // --- Party Master Functions ---
 const PARTY_STORAGE_KEY = 'vss_parties';
+
+function getPartyInfoByName(name) {
+  if (!name || name === '--') return null;
+  const parties = getParties();
+  return parties.find(p => p.name === name) || null;
+}
+
+function shortenAddress(addr) {
+  if (!addr) return '';
+  // Remove "Contact Person" parts if they exist
+  let s = addr.split(/Contact Person:/i)[0].trim();
+  // Truncate at "Tirupur" if found
+  const tirupurIdx = s.toLowerCase().indexOf('tirupur');
+  if (tirupurIdx !== -1) {
+    s = s.substring(0, tirupurIdx + 7);
+  }
+  // Remove trailing commas/dots
+  return s.replace(/[,\s.]+$/, '');
+}
+
+function getDyeingInfoByName(name) {
+  if (!name || name === '--') return null;
+  const units = getDyeingUnits();
+  return units.find(u => u.name === name) || null;
+}
 
 function getParties() {
   try {
@@ -1465,6 +1740,36 @@ function initPartyMaster() {
   if (btnCancel) btnCancel.addEventListener('click', showPartyList);
   if (btnSave) btnSave.addEventListener('click', saveParty);
   if (searchInput) searchInput.addEventListener('input', renderPartyTable);
+
+  // Seed initial parties if missing
+  const newParties = [
+    { name: 'M/s. A.R.S.KNIT FAPRICS', address: 'SHANTHI THEATEREBACKSIDE, PN ROAD, Tirupur., Contact Person: 5/1/20 MGRNAGAR STREET', phone: '8248518428' },
+    { name: 'M/s. A.S GODOWN', address: 'Tirupur.', phone: '' },
+    { name: 'M/s. A.S.TEX', address: 'NO:14 A ,MURUGANATHAPURAM, 3TH STREET, KONGU MANI ROAD, Tirupur.', phone: '9092137699' },
+    { name: 'M/s. AADHITHYA FABRICS', address: 'SV COLONY EXTEN, Tirupur., Contact Person: SECOND FLOOR 39-3/26 6HSTREE', phone: '' },
+    { name: 'M/s. Aadiya Appareal', address: 'NO/245 G AMBATGAR NAGAR, NEAR JAINAGAR, AATHUPALAYAM, Tirupur.', phone: '9894899238' },
+    { name: 'M/s. AAF ENTERPRISE', address: '(Manufacturer/Exporter of Textile, Shed No:28,Mahia Estate, Sivagangai Main Road,varichur Post, Madurai - 625020(TN)', phone: '9786422999' },
+    { name: 'M/s. ABIRAMI EXPORTS', address: 'NO.5.C.H.B.BUNK COMPOUND, POOLUVAPATTI, 15.VELAMPALAYAM, Tirupur.', phone: '' }
+  ];
+
+  let currentParties = getParties();
+  let added = false;
+  newParties.forEach((np, idx) => {
+    if (!currentParties.some(p => p.name === np.name)) {
+      currentParties.push({
+        id: 'pty_seed_' + Date.now() + '_' + idx,
+        name: np.name,
+        phone: np.phone,
+        gstin: '',
+        address: np.address
+      });
+      added = true;
+    }
+  });
+
+  if (added) {
+    saveParties(currentParties);
+  }
 
   renderPartyTable();
 }
@@ -1829,11 +2134,26 @@ function initCompanySettings() {
 }
 
 function applyCompanySettingsToPrint(type = '') {
-  // type is '' for Received, 'Del' for Delivery, 'Inv' for Invoice
   const s = getCompanySettings();
+  if (type === 'Inv') {
+    const nameEl = document.getElementById('printInvCompany');
+    const taglineEl = document.getElementById('printInvTagline');
+    const addrEl = document.getElementById('printInvAddress');
+    const gstEl = document.getElementById('printCompanyGst');
+    const stateEl = document.getElementById('printCompanyState');
+    const codeEl = document.getElementById('printCompanyStateCode');
+
+    if (nameEl) nameEl.textContent = s.name.toUpperCase();
+    if (taglineEl) taglineEl.textContent = s.tagline ? `( ${s.tagline} )` : '';
+    if (addrEl) addrEl.innerHTML = `${s.address}<br>MOBILE: ${s.phone}`;
+    if (gstEl) gstEl.textContent = s.gst;
+    if (stateEl) stateEl.textContent = 'TAMIL NADU';
+    if (codeEl) codeEl.textContent = '33';
+    return;
+  }
+    
   const nameEl = document.getElementById(`print${type}Company`);
   const addrEl = document.getElementById(`print${type}Address`);
-
   if (nameEl) nameEl.textContent = s.name.toUpperCase();
   if (addrEl) {
     const parts = [s.tagline, s.address, `Ph: ${s.phone}`, s.email].filter(Boolean);
@@ -2224,3 +2544,105 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 mongoose.connect(process.env.MONGO_URL);
+
+function convertNumberToWords(amount) {
+    if (amount == 0) return 'Zero Only';
+    var words = new Array();
+    words[0] = '';
+    words[1] = 'One';
+    words[2] = 'Two';
+    words[3] = 'Three';
+    words[4] = 'Four';
+    words[5] = 'Five';
+    words[6] = 'Six';
+    words[7] = 'Seven';
+    words[8] = 'Eight';
+    words[9] = 'Nine';
+    words[10] = 'Ten';
+    words[11] = 'Eleven';
+    words[12] = 'Twelve';
+    words[13] = 'Thirteen';
+    words[14] = 'Fourteen';
+    words[15] = 'Fifteen';
+    words[16] = 'Sixteen';
+    words[17] = 'Seventeen';
+    words[18] = 'Eighteen';
+    words[19] = 'Nineteen';
+    words[20] = 'Twenty';
+    words[30] = 'Thirty';
+    words[40] = 'Forty';
+    words[50] = 'Fifty';
+    words[60] = 'Sixty';
+    words[70] = 'Seventy';
+    words[80] = 'Eighty';
+    words[90] = 'Ninety';
+
+    amount = amount.toString();
+    var atemp = amount.split('.');
+    var number = atemp[0].split(',').join('');
+    var n_after_dot = atemp[1] ? atemp[1] : '00';
+    var n_length = number.length;
+    var words_string = '';
+    if (n_length <= 9) {
+        var n_array = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0);
+        var received_n_array = new Array();
+        for (var i = 0; i < n_length; i++) {
+            received_n_array[i] = number.substr(i, 1);
+        }
+        for (var i = 9 - n_length, j = 0; i < 9; i++, j++) {
+            n_array[i] = received_n_array[j];
+        }
+        for (var i = 0, j = 1; i < 9; i++, j++) {
+            if (i == 0 || i == 2 || i == 4 || i == 7) {
+                if (n_array[i] == 1) {
+                    n_array[j] = 10 + parseInt(n_array[j]);
+                    n_array[i] = 0;
+                }
+            }
+        }
+        var val = '';
+        for (var i = 0; i < 9; i++) {
+            if (i == 0 || i == 2 || i == 4 || i == 7) {
+                val = n_array[i] * 10;
+            } else {
+                val = n_array[i];
+            }
+            if (val != 0) {
+                words_string += words[val] + ' ';
+            }
+            if ((i == 1 && val != 0) || (i == 0 && val != 0 && n_array[i + 1] == 0)) {
+                words_string += 'Crores ';
+            }
+            if ((i == 3 && val != 0) || (i == 2 && val != 0 && n_array[i + 1] == 0)) {
+                words_string += 'Lakhs ';
+            }
+            if ((i == 5 && val != 0) || (i == 4 && val != 0 && n_array[i + 1] == 0)) {
+                words_string += 'Thousand ';
+            }
+            if (i == 6 && val != 0 && (n_array[i + 1] != 0 && n_array[i + 2] != 0)) {
+                words_string += 'Hundred and ';
+            } else if (i == 6 && val != 0) {
+                words_string += 'Hundred ';
+            }
+        }
+        words_string = words_string.split('  ').join(' ');
+    }
+
+    let paise_string = '';
+    if (parseInt(n_after_dot) > 0) {
+        if (n_after_dot.length == 1) n_after_dot += '0';
+        if (n_after_dot.length > 2) n_after_dot = n_after_dot.substring(0, 2);
+
+        var p_num = parseInt(n_after_dot);
+        if (p_num > 0) {
+            paise_string = ' and Paise ';
+            if (p_num < 20) {
+                paise_string += words[p_num];
+            } else {
+                paise_string += words[Math.floor(p_num / 10) * 10] + ' ' + (words[p_num % 10] || '');
+            }
+        }
+    }
+
+    return words_string.trim() + paise_string + ' Only';
+}
