@@ -165,7 +165,8 @@
         <button class="btn-login" id="btnLogin">Login</button>
     </div>
     <script type="module">
-        import { usersCol, query, where, getDocs, setDoc, doc } from "../database/firebase-config.js";
+        import { usersCol, query, where, getDocs, setDoc, doc } from "./firebase-config.js";
+
 
         // Seed users if needed
         async function seedUsers() {

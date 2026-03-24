@@ -7,7 +7,13 @@
   <title>Vss DC - Management System</title>
   <link rel="stylesheet" href="styles.css">
 
+  <script>
+    if (localStorage.getItem('vss_logged_in') !== 'true') {
+      window.location.href = 'login.html';
+    }
+  </script>
 </head>
+
 
 <body>
   <div class="app">
@@ -1713,7 +1719,8 @@
     </div>
   </div>
 
-  <script type="module" src="../database/firebase-config.js"></script>
+  <script type="module" src="firebase-config.js"></script>
+
   <script src="app.js"></script>
 
 </body>
