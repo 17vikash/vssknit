@@ -12,164 +12,157 @@ const SETTINGS_STORAGE_KEY = 'vss_company_settings';
 const ATT_STAFF_KEY = 'compacting_staff';
 const ATT_DATA_KEY = 'compacting_attendance';
 
-// --- Firebase Sync Helpers ---
-async function syncToFirestore(colRef, data) {
-  if (!colRef || !data || !data.id) return;
+const API_BASE = '/api';
+
+// --- MongoDB Sync Helpers ---
+async function syncToMongoDB(collection, data) {
+  if (!collection || !data || !data.id) return;
   try {
-    const docRef = doc(colRef, String(data.id));
-    await setDoc(docRef, data);
-    console.log(`Synced ${data.id} to Firestore`);
+    const response = await fetch(`${API_BASE}/${collection}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (!response.ok) throw new Error(await response.text());
+    console.log(`Synced ${data.id} to ${collection} in MongoDB`);
   } catch (error) {
-    console.error("Error syncing to Firestore:", error);
+    console.error(`Error syncing ${collection} to MongoDB:`, error);
   }
 }
 
-async function deleteFromFirestore(colRef, id) {
-  if (!colRef || !id) return;
+async function deleteFromMongoDB(collection, id) {
+  if (!collection || !id) return;
   try {
-    await deleteDoc(doc(colRef, String(id)));
-    console.log(`Deleted ${id} from Firestore`);
+    const response = await fetch(`${API_BASE}/${collection}/${id}`, {
+      method: 'DELETE'
+    });
+    if (!response.ok) throw new Error(await response.text());
+    console.log(`Deleted ${id} from ${collection} in MongoDB`);
   } catch (error) {
-    console.error("Error deleting from Firestore:", error);
+    console.error(`Error deleting from ${collection} in MongoDB:`, error);
   }
 }
 
-async function syncCountersToFirestore() {
+async function syncCountersToMongoDB() {
   const counters = {
     id: 'all_counters',
     inw: parseInt(localStorage.getItem(INW_COUNTER_KEY) || '16184', 10),
-    del: parseInt(localStorage.getItem(DELIVERY_COUNTER_KEY) || '101', 10),
+    del: parseInt(localStorage.getItem(DELIVERY_DC_COUNTER_KEY) || '101', 10),
     inv: parseInt(localStorage.getItem(INVOICE_COUNTER_KEY) || '501', 10)
   };
-  await syncToFirestore(countersCol, counters);
+  await syncToMongoDB('counters', counters);
 }
 
-async function loadFromFirestore(colRef, storageKey, localData) {
-  if (!colRef) return localData;
+async function loadFromMongoDB(collection, storageKey) {
   try {
-    const querySnapshot = await getDocs(colRef);
-    if (querySnapshot.empty) return localData;
+    const response = await fetch(`${API_BASE}/${collection}`);
+    if (!response.ok) throw new Error(await response.text());
+    
+    const remoteData = await response.json();
+    if (!remoteData || remoteData.length === 0) return JSON.parse(localStorage.getItem(storageKey) || (storageKey === ATT_DATA_KEY ? '{}' : '[]'));
 
-    const remoteData = querySnapshot.docs.map(doc => doc.data());
-
-    // Case 1: Attendance Data (stored as documents with {id: dateStr, data: {...}})
+    // Case 1: Attendance Data
     if (storageKey === ATT_DATA_KEY) {
       const attendanceObj = {};
       remoteData.forEach(item => {
-        if (item.id && item.data) attendanceObj[item.id] = item.data;
+        if (item.id && item.records) attendanceObj[item.id] = item.records;
       });
       localStorage.setItem(storageKey, JSON.stringify(attendanceObj));
       return attendanceObj;
     }
 
-    // Case 2: Company Settings (stored as a single document with id: 'app_settings')
+    // Case 2: Company Settings
     if (storageKey === SETTINGS_STORAGE_KEY) {
       const settings = remoteData.find(d => d.id === 'app_settings') || remoteData[0];
       if (settings) {
         localStorage.setItem(storageKey, JSON.stringify(settings));
         return settings;
       }
-      return localData;
     }
 
-    // Case 3: Counters (stored as a single document with id: 'all_counters')
+    // Case 3: Counters
     if (storageKey === 'all_counters') {
       const cnt = remoteData.find(d => d.id === 'all_counters') || remoteData[0];
       if (cnt) {
         if (cnt.inw) localStorage.setItem(INW_COUNTER_KEY, String(cnt.inw));
-        if (cnt.del) localStorage.setItem(DELIVERY_COUNTER_KEY, String(cnt.del));
+        if (cnt.del) localStorage.setItem(DELIVERY_DC_COUNTER_KEY, String(cnt.del));
         if (cnt.inv) localStorage.setItem(INVOICE_COUNTER_KEY, String(cnt.inv));
         return cnt;
       }
-      return localData;
     }
 
-    // Case 4: Standard Lists (Received, Delivery, Party, Dyeing, Invoice)
+    // Case 4: Standard Lists
     localStorage.setItem(storageKey, JSON.stringify(remoteData));
-    console.log(`Loaded ${remoteData.length} items from Firestore for ${storageKey}`);
+    console.log(`Loaded ${remoteData.length} items from MongoDB for ${storageKey}`);
     return remoteData;
   } catch (error) {
-    console.error("Error loading from Firestore:", error);
-    return localData;
+    console.error(`Error loading ${collection} from MongoDB:`, error);
+    return JSON.parse(localStorage.getItem(storageKey) || (storageKey === ATT_DATA_KEY ? '{}' : '[]'));
   }
 }
 
-async function syncAllToFirebase() {
-  const btn = document.getElementById('btnSyncFirebase');
+async function syncAllToMongoDB() {
+  const btn = document.getElementById('btnSyncFirebase'); // Keeping original ID for UI compatibility
   if (btn) { btn.textContent = 'Syncing...'; btn.disabled = true; }
   
   try {
-    // 1. Received Entries
-    const entries = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    for (const entry of entries) await syncToFirestore(receivedCol, entry);
-    
-    // 2. Deliveries
-    const deliveries = JSON.parse(localStorage.getItem(DELIVERY_STORAGE_KEY) || '[]');
-    for (const del of deliveries) await syncToFirestore(deliveriesCol, del);
-    
-    // 3. Parties
-    const parties = JSON.parse(localStorage.getItem(PARTY_STORAGE_KEY) || '[]');
-    for (const p of parties) await syncToFirestore(partiesCol, p);
-    
-    // 4. Dyeing Units
-    const dyeing = JSON.parse(localStorage.getItem(DYEING_STORAGE_KEY) || '[]');
-    for (const d of dyeing) await syncToFirestore(dyeingCol, d);
+    const syncTasks = [
+      { key: STORAGE_KEY, col: 'received', isObj: false },
+      { key: DELIVERY_STORAGE_KEY, col: 'delivery', isObj: false },
+      { key: PARTY_STORAGE_KEY, col: 'party_master', isObj: false },
+      { key: DYEING_STORAGE_KEY, col: 'dyeing_master', isObj: false },
+      { key: ATT_STAFF_KEY, col: 'staff', isObj: false },
+      { key: INVOICE_STORAGE_KEY, col: 'invoices', isObj: false }
+    ];
 
-    // 5. Staff
-    const staff = JSON.parse(localStorage.getItem(ATT_STAFF_KEY) || '[]');
-    for (const s of staff) await syncToFirestore(staffCol, s);
-
-    // 6. Attendance
-    const allAtt = JSON.parse(localStorage.getItem(ATT_DATA_KEY) || '{}');
-    for (const dateStr in allAtt) {
-      await syncToFirestore(attendanceCol, { id: dateStr, data: allAtt[dateStr] });
+    for (const task of syncTasks) {
+      const items = JSON.parse(localStorage.getItem(task.key) || '[]');
+      for (const item of items) await syncToMongoDB(task.col, item);
     }
 
-    // 7. Invoices
-    const invoices = JSON.parse(localStorage.getItem(INVOICE_STORAGE_KEY) || '[]');
-    for (const inv of invoices) await syncToFirestore(invoicesCol, inv);
+    // Attendance (Object with dates)
+    const allAtt = JSON.parse(localStorage.getItem(ATT_DATA_KEY) || '{}');
+    for (const dateStr in allAtt) {
+      await syncToMongoDB('attendance', { id: dateStr, records: allAtt[dateStr] });
+    }
 
-    // 8. Settings
+    // Settings
     const settings = getCompanySettings();
     if (settings) {
       settings.id = 'app_settings';
-      await syncToFirestore(settingsCol, settings);
+      await syncToMongoDB('settings', settings);
     }
 
-    // 9. Counters
-    const counters = {
-      id: 'all_counters',
-      inw: parseInt(localStorage.getItem(INW_COUNTER_KEY) || '16184', 10),
-      del: parseInt(localStorage.getItem(DELIVERY_COUNTER_KEY) || '101', 10),
-      inv: parseInt(localStorage.getItem(INVOICE_COUNTER_KEY) || '501', 10)
-    };
-    await syncToFirestore(countersCol, counters);
+    // Counters
+    await syncCountersToMongoDB();
     
-    alert('Synchronization complete! All data uploaded to Firebase.');
+    alert('Synchronization complete! All data uploaded to MongoDB.');
   } catch (error) {
     console.error("Sync Error:", error);
     alert('Sync failed. Check console.');
   } finally {
-    if (btn) { btn.textContent = 'Sync All to Firebase'; btn.disabled = false; }
+    if (btn) { btn.textContent = 'Sync All to MongoDB'; btn.disabled = false; }
   }
 }
+
+window.syncAllToFirebase = syncAllToMongoDB; // Maintain legacy name for onclick
 
 document.addEventListener('DOMContentLoaded', () => {
   initNavigation();
   initSidebarCollapse();
   updatePageDate();
 
-  // Load all data from Firestore then initialize/render modules
+  // Load all data from MongoDB then initialize/render modules
   Promise.all([
-    loadFromFirestore(receivedCol, STORAGE_KEY),
-    loadFromFirestore(deliveriesCol, DELIVERY_STORAGE_KEY),
-    loadFromFirestore(invoicesCol, INVOICE_STORAGE_KEY),
-    loadFromFirestore(partiesCol, PARTY_STORAGE_KEY),
-    loadFromFirestore(dyeingCol, DYEING_STORAGE_KEY),
-    loadFromFirestore(staffCol, ATT_STAFF_KEY),
-    loadFromFirestore(attendanceCol, ATT_DATA_KEY),
-    loadFromFirestore(settingsCol, SETTINGS_STORAGE_KEY),
-    loadFromFirestore(countersCol, 'all_counters')
+    loadFromMongoDB('received', STORAGE_KEY),
+    loadFromMongoDB('delivery', DELIVERY_STORAGE_KEY),
+    loadFromMongoDB('invoices', INVOICE_STORAGE_KEY),
+    loadFromMongoDB('party_master', PARTY_STORAGE_KEY),
+    loadFromMongoDB('dyeing_master', DYEING_STORAGE_KEY),
+    loadFromMongoDB('staff', ATT_STAFF_KEY),
+    loadFromMongoDB('attendance', ATT_DATA_KEY),
+    loadFromMongoDB('settings', SETTINGS_STORAGE_KEY),
+    loadFromMongoDB('counters', 'all_counters')
   ]).then(() => {
     initReceivedCloth();
     initInwardEntry();
@@ -182,9 +175,10 @@ document.addEventListener('DOMContentLoaded', () => {
     updatePartyDropdowns();
     setupEnterKeyNavigation();
     updateDashboardMetrics();
-    console.log("All modules initialized with Firestore data");
+    console.log("All modules initialized with MongoDB data");
   });
 });
+
 
 function preparePrint(containerId) {
   ['receivedChallanPrint', 'deliveryChallanPrint', 'invoicePrint'].forEach(id => {
@@ -477,7 +471,7 @@ function deleteEntry(id) {
   if (!confirm('Are you sure you want to delete this received entry?')) return;
   const entries = getEntries().filter(x => x.id !== id);
   saveEntries(entries);
-  deleteFromFirestore(receivedCol, id); // Delete from Firestore
+  deleteFromMongoDB('received', id); // Delete from MongoDB
   updateDashboardMetrics();
   renderReceivedTable();
   showReceivedList();
@@ -636,8 +630,8 @@ function saveInwardEntry() {
     }
     saveEntries(updated);
     updateDashboardMetrics();
-    syncToFirestore(receivedCol, entry); // Sync to Firestore
-    syncCountersToFirestore(); // Sync updated counters
+    syncToMongoDB('received', entry); // Sync to MongoDB
+    syncCountersToMongoDB(); // Sync updated counters
     showReceivedList();
   } finally {
     setTimeout(() => { isSavingInward = false; }, 500);
@@ -799,7 +793,7 @@ function initDelivery() {
     inwNoInput.addEventListener('blur', fetchInwardDetailsForDelivery);
   }
 
-  loadFromFirestore(deliveriesCol, DELIVERY_STORAGE_KEY).then(() => {
+  loadFromMongoDB('delivery', DELIVERY_STORAGE_KEY).then(() => {
     renderDeliveryTable();
   });
 }
@@ -1032,7 +1026,7 @@ function deleteDelivery(id) {
   if (!confirm('Are you sure you want to delete this delivery entry?')) return;
   const deliveries = getDeliveries().filter(x => x.id !== id);
   saveDeliveries(deliveries);
-  deleteFromFirestore(deliveriesCol, id); // Delete from Firestore
+  deleteFromMongoDB('delivery', id); // Delete from MongoDB
   updateDashboardMetrics();
   renderDeliveryTable();
   showDeliveryList();
@@ -1136,8 +1130,8 @@ function saveDelivery() {
 
   saveDeliveries(updated);
   updateDashboardMetrics();
-  syncToFirestore(deliveriesCol, delivery); // Sync to Firestore
-  syncCountersToFirestore(); // Sync updated counters
+  syncToMongoDB('delivery', delivery); // Sync to MongoDB
+  syncCountersToMongoDB(); // Sync updated counters
   showDeliveryList();
 }
 
@@ -1391,7 +1385,7 @@ function initInvoice() {
     partySel.addEventListener('change', updateInvInwList);
   }
 
-  loadFromFirestore(invoicesCol, INVOICE_STORAGE_KEY).then(() => {
+  loadFromMongoDB('invoices', INVOICE_STORAGE_KEY).then(() => {
     renderInvoiceTable();
   });
 }
@@ -1560,7 +1554,7 @@ function deleteInvoice(id) {
   if (!confirm('Are you sure you want to delete this invoice?')) return;
   const invoices = getInvoices().filter(x => x.id !== id);
   saveInvoices(invoices);
-  deleteFromFirestore(invoicesCol, id); // Delete from Firestore
+  deleteFromMongoDB('invoices', id); // Delete from MongoDB
   renderInvoiceTable();
 }
 
@@ -1731,8 +1725,8 @@ function saveInvoice() {
   const invoices = getInvoices();
   invoices.push(invoice);
   saveInvoices(invoices);
-  syncToFirestore(invoicesCol, invoice); // Sync to Firestore
-  syncCountersToFirestore(); // Sync updated counters
+  syncToMongoDB('invoices', invoice); // Sync to MongoDB
+  syncCountersToMongoDB(); // Sync updated counters
   showInvoiceList();
 }
 
@@ -2084,10 +2078,10 @@ function initPartyMaster() {
   if (added) {
     saveParties(currentParties);
     // Optional: bulk sync currentParties to Firestore if needed
-    currentParties.forEach(p => syncToFirestore(partiesCol, p));
+    currentParties.forEach(p => syncToMongoDB('party_master', p));
   }
 
-  loadFromFirestore(partiesCol, PARTY_STORAGE_KEY).then(() => {
+  loadFromMongoDB('party_master', PARTY_STORAGE_KEY).then(() => {
     renderPartyTable();
     updatePartyDropdowns();
   });
@@ -2172,7 +2166,7 @@ function saveParty() {
   }
 
   saveParties(updated);
-  syncToFirestore(partiesCol, party); // Sync to Firestore
+  syncToMongoDB('party_master', party); // Sync to MongoDB
   showPartyList();
   updatePartyDropdowns();
 }
@@ -2195,7 +2189,7 @@ function deleteParty(id) {
   if (!confirm('Are you sure you want to delete this party?')) return;
   const parties = getParties().filter(x => x.id !== id);
   saveParties(parties);
-  deleteFromFirestore(partiesCol, id); // Delete from Firestore
+  deleteFromMongoDB('party_master', id); // Delete from MongoDB
   renderPartyTable();
   updatePartyDropdowns();
 }
@@ -2283,7 +2277,7 @@ function initDyeingMaster() {
   if (btnSave) btnSave.addEventListener('click', saveDyeingUnit);
   if (searchInput) searchInput.addEventListener('input', renderDyeingTable);
 
-  loadFromFirestore(dyeingCol, DYEING_STORAGE_KEY).then(() => {
+  loadFromMongoDB('dyeing_master', DYEING_STORAGE_KEY).then(() => {
     renderDyeingTable();
     updateDyeingDropdowns();
   });
@@ -2363,7 +2357,7 @@ function saveDyeingUnit() {
   }
 
   saveDyeingUnits(updated);
-  syncToFirestore(dyeingCol, unit); // Sync to Firestore
+  syncToMongoDB('dyeing_master', unit); // Sync to MongoDB
   showDyeingList();
   updateDyeingDropdowns();
 }
@@ -2385,7 +2379,7 @@ function deleteDyeingUnit(id) {
   if (!confirm('Are you sure you want to delete this dyeing unit?')) return;
   const units = getDyeingUnits().filter(x => x.id !== id);
   saveDyeingUnits(units);
-  deleteFromFirestore(dyeingCol, id); // Delete from Firestore
+  deleteFromMongoDB('dyeing_master', id); // Delete from MongoDB
   renderDyeingTable();
   updateDyeingDropdowns();
 }
@@ -2454,13 +2448,13 @@ function initCompanySettings() {
         gst: els.gst.value?.trim() || ''
       };
       localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(newSettings));
-      await syncToFirestore(settingsCol, newSettings);
+      await syncToMongoDB('settings', newSettings);
       alert('Company Settings Saved and Synchronized Successfully!');
     });
   }
 
   // Load latest settings from Firestore
-  loadFromFirestore(settingsCol, SETTINGS_STORAGE_KEY).then(remote => {
+  loadFromMongoDB('settings', SETTINGS_STORAGE_KEY).then(remote => {
     if (remote && remote.length > 0) {
       const s = remote.find(x => x.id === 'app_settings') || remote[0];
       if (els.name) els.name.value = s.name || '';
@@ -2546,8 +2540,8 @@ function initAttendanceSystem() {
   updateLiveClock();
 
   Promise.all([
-    loadFromFirestore(staffCol, ATT_STAFF_KEY),
-    loadFromFirestore(attendanceCol, ATT_DATA_KEY)
+    loadFromMongoDB('staff', ATT_STAFF_KEY),
+    loadFromMongoDB('attendance', ATT_DATA_KEY)
   ]).then(() => {
     renderAttendanceTable(dateInput.value);
   });
@@ -2611,7 +2605,7 @@ function addStaff() {
   staff.push(newStaff);
   localStorage.setItem(ATT_STAFF_KEY, JSON.stringify(staff));
 
-  syncToFirestore(staffCol, newStaff); // Sync worker to Firestore
+  syncToMongoDB('staff', newStaff); // Sync worker to MongoDB
 
   nameInput.value = '';
   salaryInput.value = '';
@@ -2627,7 +2621,7 @@ function deleteStaff(id) {
   staff = staff.filter(s => s.id !== id);
   localStorage.setItem(ATT_STAFF_KEY, JSON.stringify(staff));
   
-  deleteFromFirestore(staffCol, id); // Delete from Firestore
+  deleteFromMongoDB('staff', id); // Delete from MongoDB
 
   const currentDate = document.getElementById('attDateSelector').value;
   renderAttendanceTable(currentDate);
@@ -2711,8 +2705,8 @@ function autoSaveAttendance(dateStr) {
 
   saveAttData(allData);
   
-  // Sync this specific date's data to Firestore
-  syncToFirestore(attendanceCol, { id: dateStr, data: allData[dateStr] });
+  // Sync this specific date's data to MongoDB
+  syncToMongoDB('attendance', { id: dateStr, records: allData[dateStr] });
 }
 
 function showReport() {

@@ -55,7 +55,80 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+import Received from '../database/models/Received.js';
+import Delivery from '../database/models/Delivery.js';
+import Party from '../database/models/Party.js';
+import DyeingUnit from '../database/models/DyeingUnit.js';
+import Staff from '../database/models/Staff.js';
+import Attendance from '../database/models/Attendance.js';
+import Invoice from '../database/models/Invoice.js';
+import Setting from '../database/models/Setting.js';
+import Counter from '../database/models/Counter.js';
+
+// Model Mapping
+const models = {
+    received: Received,
+    delivery: Delivery,
+    party_master: Party,
+    dyeing_master: DyeingUnit,
+    staff: Staff,
+    attendance: Attendance,
+    invoices: Invoice,
+    settings: Setting,
+    counters: Counter
+};
+
+// Generic Data Endpoints
+app.get('/api/:collection', async (req, res) => {
+    try {
+        const { collection } = req.params;
+        const Model = models[collection];
+        if (!Model) return res.status(404).json({ error: 'Collection not found' });
+
+        const data = await Model.find({});
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/api/:collection', async (req, res) => {
+    try {
+        const { collection } = req.params;
+        const Model = models[collection];
+        if (!Model) return res.status(404).json({ error: 'Collection not found' });
+
+        const data = req.body;
+        if (!data.id) return res.status(400).json({ error: 'ID is required' });
+
+        // Upsert based on custom 'id' field
+        const updatedDoc = await Model.findOneAndUpdate(
+            { id: String(data.id) },
+            data,
+            { upsert: true, new: true, setDefaultsOnInsert: true }
+        );
+
+        res.json(updatedDoc);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.delete('/api/:collection/:id', async (req, res) => {
+    try {
+        const { collection, id } = req.params;
+        const Model = models[collection];
+        if (!Model) return res.status(404).json({ error: 'Collection not found' });
+
+        await Model.findOneAndDelete({ id: String(id) });
+        res.json({ message: 'Deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Admin Initial Registration Endpoint (Development Use Only)
+
 app.post('/api/register', async (req, res) => {
     try {
         const { username, password } = req.body;

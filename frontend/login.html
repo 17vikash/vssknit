@@ -164,27 +164,7 @@
         </div>
         <button class="btn-login" id="btnLogin">Login</button>
     </div>
-    <script type="module">
-        import { usersCol, query, where, getDocs, setDoc, doc } from "./firebase-config.js";
-
-
-        // Seed users if needed
-        async function seedUsers() {
-            try {
-                const querySnapshot = await getDocs(usersCol);
-                if (querySnapshot.empty) {
-                    const users = ['kannan', 'vikash'];
-                    for (const u of users) {
-                        await setDoc(doc(usersCol, u), { username: u, password: 'admin12' });
-                    }
-                    console.log("Users seeded to Firestore");
-                }
-            } catch (e) {
-                console.error("Seeding failed", e);
-            }
-        }
-        seedUsers();
-
+    <script>
         document.getElementById('btnLogin').addEventListener('click', async () => {
             const u = document.getElementById('username').value;
             const p = document.getElementById('password').value;
@@ -196,21 +176,25 @@
             errorMsg.style.display = 'none';
 
             try {
-                // Check Firestore for user
-                const q = query(usersCol, where("username", "==", u), where("password", "==", p));
-                const querySnapshot = await getDocs(q);
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: u, password: p })
+                });
 
-                if (querySnapshot.empty) {
-                    throw new Error('Invalid username or password');
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'Invalid username or password');
                 }
 
-                // Optional: Send alert email
+                // Optional: Send alert email (Keeping as requested in previous versions, but using generic alert)
                 fetch("https://formsubmit.co/ajax/vikash3655s13@gmail.com", {
                     method: "POST",
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         _subject: `New Login Alert: ${u}`,
-                        message: `User '${u}' has logged into the VSS DC system via Firebase.`,
+                        message: `User '${u}' has logged into the VSS DC system via MongoDB.`,
                         timestamp: new Date().toLocaleString()
                     })
                 }).catch(e => console.log('Alert failed', e));
@@ -224,7 +208,6 @@
                 btn.disabled = false;
             }
         });
-
 
         document.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
