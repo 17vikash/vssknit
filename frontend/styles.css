@@ -1048,13 +1048,13 @@ body {
     color: #000;
   }
 
-  /* Received Challan A4 Print Layout (Optimized for Scale 160, Margin None) */
-  .print-a4-receipt {
+  /* Received and Delivery A4 Print Layout (Optimized for Scale 160, Margin None) */
+  .print-a4-receipt, .print-a4-delivery {
     width: 100%;
     /* Max width ensures it doesn't grow absurdly on unexpected wider displays, but generally adapts to paper width */
     max-width: 210mm;
     margin: 0 auto;
-    padding: 6mm 8mm; /* Reduced padding to help prevent overflow at scale 160 */
+    padding: 2mm 8mm 6mm 8mm; /* Reduced padding from top */
     box-sizing: border-box;
     font-size: 13px;
     background: white;
@@ -1062,7 +1062,9 @@ body {
   }
 
   .print-a4-receipt .print-item-table th,
-  .print-a4-receipt .print-item-table td {
+  .print-a4-receipt .print-item-table td,
+  .print-a4-delivery .print-item-table th,
+  .print-a4-delivery .print-item-table td {
     padding: 4px 8px; /* Tighter padding to fit exactly into 160 scale A4 viewport (131.25mm) */
   }
 
@@ -1159,13 +1161,22 @@ body {
     table-layout: fixed;
   }
 
-  /* Specific column widths for the 6 columns layout: Lot No, Fabric, Colour, Dia, Roll, Weight */
+  /* Specific column widths for the Received 6 columns layout */
   .print-a4-receipt .print-item-table th:nth-child(1), .print-a4-receipt .print-item-table td:nth-child(1) { width: 14%; } /* Lot No */
   .print-a4-receipt .print-item-table th:nth-child(2), .print-a4-receipt .print-item-table td:nth-child(2) { width: 42%; } /* Fabric */
   .print-a4-receipt .print-item-table th:nth-child(3), .print-a4-receipt .print-item-table td:nth-child(3) { width: 14%; } /* Colour */
   .print-a4-receipt .print-item-table th:nth-child(4), .print-a4-receipt .print-item-table td:nth-child(4) { width: 10%; }  /* Dia */
   .print-a4-receipt .print-item-table th:nth-child(5), .print-a4-receipt .print-item-table td:nth-child(5) { width: 8%; }   /* Roll */
   .print-a4-receipt .print-item-table th:nth-child(6), .print-a4-receipt .print-item-table td:nth-child(6) { width: 12%; } /* Weight */
+
+  /* Specific column widths for the Delivery 7 columns layout  */
+  .print-a4-delivery .print-item-table th:nth-child(1), .print-a4-delivery .print-item-table td:nth-child(1) { width: 12%; } /* Lot No */
+  .print-a4-delivery .print-item-table th:nth-child(2), .print-a4-delivery .print-item-table td:nth-child(2) { width: 32%; } /* Fabric */
+  .print-a4-delivery .print-item-table th:nth-child(3), .print-a4-delivery .print-item-table td:nth-child(3) { width: 15%; } /* HSN */
+  .print-a4-delivery .print-item-table th:nth-child(4), .print-a4-delivery .print-item-table td:nth-child(4) { width: 13%; } /* Colour */
+  .print-a4-delivery .print-item-table th:nth-child(5), .print-a4-delivery .print-item-table td:nth-child(5) { width: 10%; }  /* Dia */
+  .print-a4-delivery .print-item-table th:nth-child(6), .print-a4-delivery .print-item-table td:nth-child(6) { width: 8%; }   /* Roll */
+  .print-a4-delivery .print-item-table th:nth-child(7), .print-a4-delivery .print-item-table td:nth-child(7) { width: 10%; } /* Weight */
 
   .print-item-table tr {
     page-break-inside: avoid;

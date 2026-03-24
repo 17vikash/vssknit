@@ -164,39 +164,66 @@
         </div>
         <button class="btn-login" id="btnLogin">Login</button>
     </div>
-    <script>
-        document.getElementById('btnLogin').addEventListener('click', () => {
+    <script type="module">
+        import { usersCol, query, where, getDocs, setDoc, doc } from "../database/firebase-config.js";
+
+        // Seed users if needed
+        async function seedUsers() {
+            try {
+                const querySnapshot = await getDocs(usersCol);
+                if (querySnapshot.empty) {
+                    const users = ['kannan', 'vikash'];
+                    for (const u of users) {
+                        await setDoc(doc(usersCol, u), { username: u, password: 'admin12' });
+                    }
+                    console.log("Users seeded to Firestore");
+                }
+            } catch (e) {
+                console.error("Seeding failed", e);
+            }
+        }
+        seedUsers();
+
+        document.getElementById('btnLogin').addEventListener('click', async () => {
             const u = document.getElementById('username').value;
             const p = document.getElementById('password').value;
             const errorMsg = document.getElementById('errorMsg');
             const btn = document.getElementById('btnLogin');
 
-            // Allow kannan or vikash with admin12 password
-            if ((u === 'kannan' || u === 'vikash') && p === 'admin12') {
-                btn.textContent = 'Logging in...';
-                btn.disabled = true;
+            btn.textContent = 'Logging in...';
+            btn.disabled = true;
+            errorMsg.style.display = 'none';
 
+            try {
+                // Check Firestore for user
+                const q = query(usersCol, where("username", "==", u), where("password", "==", p));
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    throw new Error('Invalid username or password');
+                }
+
+                // Optional: Send alert email
                 fetch("https://formsubmit.co/ajax/vikash3655s13@gmail.com", {
                     method: "POST",
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         _subject: `New Login Alert: ${u}`,
-                        message: `User '${u}' has logged into the VSS DC system.`,
+                        message: `User '${u}' has logged into the VSS DC system via Firebase.`,
                         timestamp: new Date().toLocaleString()
                     })
-                })
-                    .catch(err => console.log('Email error', err))
-                    .finally(() => {
-                        window.location.href = 'index.html';
-                    });
-            } else {
-                errorMsg.textContent = 'Invalid password. Please try again.';
+                }).catch(e => console.log('Alert failed', e));
+                
+                localStorage.setItem('vss_logged_in', 'true');
+                window.location.href = 'index.html';
+            } catch (err) {
+                errorMsg.textContent = err.message;
                 errorMsg.style.display = 'block';
+                btn.textContent = 'Login';
+                btn.disabled = false;
             }
         });
+
 
         document.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {

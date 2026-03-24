@@ -1,9 +1,10 @@
-import express from 'express';
 import mongoose from 'mongoose';
+import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs';
-import User from './models/User.js';
+import User from '../database/models/User.js';
+
 
 dotenv.config();
 
@@ -11,12 +12,13 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Connect to local MongoDB
-mongoose.connect('mongodb://127.0.0.1:27017/vss_dc', {
+// Connect to MongoDB
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/vss_dc';
+mongoose.connect(MONGO_URI, {
     serverSelectionTimeoutMS: 5000,
     family: 4
 })
-    .then(() => console.log('✅ Connected to MongoDB (vss_dc)'))
+    .then(() => console.log('✅ Connected to MongoDB (' + MONGO_URI + ')'))
     .catch(err => console.error('MongoDB connection error:', err));
 
 // Test Home Route

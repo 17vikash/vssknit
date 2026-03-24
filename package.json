@@ -4,19 +4,20 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "node server.js",
+    "start": "node backend/server.js",
     "dev": "vite",
-    "server": "node server.js",
-    "build": "tsc -b && vite build",
+    "server": "node backend/server.js",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
+
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
-    "mongoose": "^9.2.3",
+    "mongoose": "^9.3.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },

@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vss DC - Management System</title>
   <link rel="stylesheet" href="styles.css">
+
 </head>
 
 <body>
@@ -1119,6 +1120,7 @@
               <table class="received-table">
                 <thead>
                   <tr>
+                    <th>Date</th>
                     <th>Name</th>
                     <th>Address</th>
                     <th>Phone</th>
@@ -1287,9 +1289,11 @@
               </div>
             </div>
 
-            <div class="form-actions" style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
+            <div class="form-actions" style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb; display: flex; gap: 16px;">
               <button type="button" class="btn-action" id="btnSettingSave"
                 style="background: var(--accent-blue); color: white; border: none;">Save Settings</button>
+              <button type="button" class="btn-action" id="btnSyncFirebase" onclick="syncAllToFirebase()"
+                style="background: #10b981; color: white; border: none;">Sync All to Firebase</button>
             </div>
           </div>
         </section>
@@ -1709,7 +1713,9 @@
     </div>
   </div>
 
+  <script type="module" src="../database/firebase-config.js"></script>
   <script src="app.js"></script>
+
 </body>
 
 </html>
